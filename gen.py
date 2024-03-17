@@ -12,6 +12,8 @@ A4_HEIGHT = 595
 UNIT = 14
 GRID_WIDTH = 28
 GRID_HEIGHT = 40
+MARGIN_X = 20
+MARGIN_Y = 17
 
 def insert_segment(line, segment):
 	i = 0
@@ -158,6 +160,21 @@ class Stroke(Enum):
 	LIGHT = 2
 	DARK = 3
 
+class Orientation(Enum):
+	HORIZONTAL = 1
+	VERTICAL = 2
+
+class Side(Enum):
+	LEFT = 1
+	RIGHT = 2
+
+def print_stroke(stroke):
+	if stroke == Stroke.LIGHT:
+		print(f"[0.30 1.10] 0.15 setdash")
+	if stroke == Stroke.DARK:
+		print(f"[0.30 0.70] 0.15 setdash")
+	print("stroke")
+
 class Segment(object):
 	def __init__(self, stroke, start, end):
 		self.stroke = stroke
@@ -173,26 +190,23 @@ class Grid(object):
 		self.vertical = [[] for i in range(0, GRID_WIDTH + 1)]
 
 	def add_horizontal_segment(self, row, start, end, stroke):
-		self.horizontal[row].append(Segment(stroke, start, end))
+		insert_segment(self.horizontal[row], Segment(stroke, start, end))
 
 	def add_vertical_segment(self, column, start, end, stroke):
-		self.vertical[column].append(Segment(stroke, start, end))
+		insert_segment(self.vertical[column], Segment(stroke, start, end))
 
-	def print(self, x, y):
+	def render(self, x, y):
 		x_real = y
-		y_real = A4_WIDTH - x - (len(self.vertical) - 1) * UNIT 
+		y_real = A4_WIDTH - x - GRID_WIDTH * UNIT 
 		# vertical lines get printed as horizontal
+		# they are also printed top-to-bottom
 		for i, line in enumerate(self.vertical):
 			for segment in line:
 				if segment.stroke == Stroke.BLANK:
 					continue
-				print(f"{segment.start * UNIT + x_real} {i * UNIT + y_real} moveto")
-				print(f"{segment.end * UNIT + x_real} {i * UNIT + y_real} lineto")
-				if segment.stroke == Stroke.LIGHT:
-					print(f"[0.30 1.10] 0.15 setdash")
-				if segment.stroke == Stroke.DARK:
-					print(f"[0.30 0.70] 0.15 setdash")
-				print("stroke")
+				print(f"{segment.start * UNIT + x_real} {(len(self.vertical) - i - 1) * UNIT + y_real} moveto")
+				print(f"{segment.end * UNIT + x_real} {(len(self.vertical) - i - 1) * UNIT + y_real} lineto")
+				print_stroke(segment.stroke)
 
 		# horizontal lines get printed as vertical	
 		for i, line in enumerate(self.horizontal):
@@ -201,33 +215,72 @@ class Grid(object):
 					continue
 				print(f"{i * UNIT + x_real} {segment.start * UNIT + y_real} moveto")
 				print(f"{i * UNIT + x_real} {segment.end * UNIT + y_real} lineto")
-				if segment.stroke == Stroke.LIGHT:
-					print(f"[0.30 1.10] 0.15 setdash")
-				if segment.stroke == Stroke.DARK:
-					print(f"[0.30 0.70] 0.15 setdash")
-				print("stroke")
+				print_stroke(segment.stroke)
+
+class Text(object):
+	def __init__(self, text, size, x, y, orientation=Orientation.HORIZONTAL):
+		self.text = text
+		self.size = size
+		self.x = x
+		self.y = y
+		self.orientation = orientation
+	
+	def render(self, rx, ry):
+		x_real = ry + self.y
+		y_real = A4_WIDTH - rx - self.x
+		print(f"/Times-Roman findfont")
+		print(f"{self.size} scalefont")
+		print(f"setfont")
+		print(f"{x_real} {y_real} translate")
+		print(f"270 rotate")
+		print(f"0 0 moveto")
+		print(f"({self.text}) show")
+		print(f"90 rotate")
+		print(f"{-x_real} {-y_real} translate")
+			
+
+class Page(object):
+	def __init__(self):
+		self.grid = Grid()
+		self.text = []
+	
+	def render(self, side):
+		if side == Side.LEFT:
+			x = MARGIN_X
+			y = MARGIN_Y
+		if side == Side.RIGHT:
+			x = A4_WIDTH - MARGIN_X - GRID_WIDTH * UNIT
+			y = MARGIN_Y
+
+		self.grid.render(x, y)
+
+		for t in self.text:
+			t.render(x, y)
+		
 
 # grid with r rows and c columns
 # hobonichi secret line at column s
 def make_blank_grid_with_secret(r, c, s):
-	grid = Grid()
+	page = Page()
 
 	# horizontal lines	
 	for i in range(0, r + 1):
-		grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
+		page.grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
 
 	# vertical lines
 	for i in range(0, c + 1):
 		if (i == s):
-			grid.add_vertical_segment(i, 0, r, Stroke.DARK)
+			page.grid.add_vertical_segment(i, 0, r, Stroke.DARK)
 		else:
-			grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
+			page.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
 	
-	return grid
+	page.text.append(Text("This is a test", 32, 0, 0))
+	
+	return page
 
-def print_two_grids_on_a4(margin_x, margin_y, g1, g2):
-	g1.print(margin_x, margin_y)
-	g2.print(A4_WIDTH - margin_x - GRID_WIDTH * UNIT, margin_y)
+def render_two_grids_on_a4(g1, g2):
+	g1.render(Side.LEFT)
+	g2.render(Side.RIGHT)
 
 print(
 """
@@ -250,12 +303,11 @@ newpath
 0.12 setlinewidth
 """)
 
-grid = make_blank_grid_with_secret(40, 28, 21)
-print_two_grids_on_a4(20, 17, grid, grid)
+grid = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
+render_two_grids_on_a4(grid, grid)
 
 print(
 """
-stroke
 showpage
 """
 )
