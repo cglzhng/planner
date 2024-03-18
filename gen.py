@@ -170,10 +170,52 @@ class Side(Enum):
 
 def print_stroke(stroke):
 	if stroke == Stroke.LIGHT:
-		print(f"[0.30 1.10] 0.15 setdash")
+		print("LIGHT")
 	if stroke == Stroke.DARK:
-		print(f"[0.30 0.70] 0.15 setdash")
-	print("stroke")
+		print("DARK")
+
+def print_line(x1, y1, x2, y2):
+	print(f"{x1} {y1} {x2} {y2} LINE")
+
+def print_text_horizontal(text, size, x, y):
+	print(f"{-x} {-y} ({text}) {x} {y} /Iosevka findfont {size} scalefont setfont T_HORIZ")
+
+def print_preamble():
+	print( """
+%!PS-Adobe-3.0
+%%BoundingBox: 24 24 571 818
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginPageSetup
+<< /PageSize [595 842] >> setpagedevice
+%%EndPageSetup
+/LINE { moveto lineto } def
+/LIGHT { [0.30 1.10] 0.15 setdash stroke } def
+/DARK { [0.30 0.70] 0.15 setdash stroke } def
+/T_HORIZ {
+translate
+270 rotate
+0 0 moveto
+show
+90 rotate
+translate
+} def
+""")
+
+"""
+		print(f"/Iosevka findfont")
+		print(f"{self.size} scalefont")
+		print(f"setfont")
+		print(f"{x_real} {y_real} translate")
+		print(f"270 rotate")
+		print(f"0 0 moveto")
+		print(f"({self.text}) show")
+		print(f"90 rotate")
+		print(f"{-x_real} {-y_real} translate")
+"""
 
 class Segment(object):
 	def __init__(self, stroke, start, end):
@@ -204,8 +246,12 @@ class Grid(object):
 			for segment in line:
 				if segment.stroke == Stroke.BLANK:
 					continue
-				print(f"{segment.start * UNIT + x_real} {(len(self.vertical) - i - 1) * UNIT + y_real} moveto")
-				print(f"{segment.end * UNIT + x_real} {(len(self.vertical) - i - 1) * UNIT + y_real} lineto")
+				print_line(
+					segment.start * UNIT + x_real,
+					(len(self.vertical) - i - 1) * UNIT + y_real,
+					segment.end * UNIT + x_real,
+					(len(self.vertical) - i - 1) * UNIT + y_real,
+				)
 				print_stroke(segment.stroke)
 
 		# horizontal lines get printed as vertical	
@@ -213,8 +259,12 @@ class Grid(object):
 			for segment in line:
 				if segment.stroke == Stroke.BLANK:
 					continue
-				print(f"{i * UNIT + x_real} {segment.start * UNIT + y_real} moveto")
-				print(f"{i * UNIT + x_real} {segment.end * UNIT + y_real} lineto")
+				print_line(
+					i * UNIT + x_real,
+					segment.start * UNIT + y_real,
+					i * UNIT + x_real, 
+					segment.end * UNIT + y_real,
+				)
 				print_stroke(segment.stroke)
 
 class Text(object):
@@ -228,15 +278,8 @@ class Text(object):
 	def render(self, rx, ry):
 		x_real = ry + self.y
 		y_real = A4_WIDTH - rx - self.x
-		print(f"/Times-Roman findfont")
-		print(f"{self.size} scalefont")
-		print(f"setfont")
-		print(f"{x_real} {y_real} translate")
-		print(f"270 rotate")
-		print(f"0 0 moveto")
-		print(f"({self.text}) show")
-		print(f"90 rotate")
-		print(f"{-x_real} {-y_real} translate")
+
+		print_text_horizontal(self.text, self.size, x_real, y_real)
 			
 
 class Page(object):
@@ -244,7 +287,7 @@ class Page(object):
 		self.grid = Grid()
 		self.text = []
 	
-	def render(self, side):
+	def render(self, side, num=None):
 		if side == Side.LEFT:
 			x = MARGIN_X
 			y = MARGIN_Y
@@ -254,9 +297,14 @@ class Page(object):
 
 		self.grid.render(x, y)
 
+		if num is not None:
+			if side == Side.LEFT:
+				Text(str(num), 9, 0, 4).render(x, y)
+			if side == Side.RIGHT:
+				Text(str(num), 9, (GRID_WIDTH - 1) * UNIT, 4).render(x, y)
+
 		for t in self.text:
 			t.render(x, y)
-		
 
 # grid with r rows and c columns
 # hobonichi secret line at column s
@@ -264,38 +312,25 @@ def make_blank_grid_with_secret(r, c, s):
 	page = Page()
 
 	# horizontal lines	
-	for i in range(0, r + 1):
+	page.grid.add_horizontal_segment(0, 0, c, Stroke.DARK)
+	for i in range(1, r):
 		page.grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
+	page.grid.add_horizontal_segment(r, 0, c, Stroke.DARK)
 
 	# vertical lines
-	for i in range(0, c + 1):
-		if (i == s):
-			page.grid.add_vertical_segment(i, 0, r, Stroke.DARK)
-		else:
-			page.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
-	
-	page.text.append(Text("This is a test", 32, 0, 0))
+	page.grid.add_vertical_segment(0, 0, r, Stroke.DARK)
+	for i in range(1, c):
+		page.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
+	page.grid.add_vertical_segment(s, 0, r, Stroke.DARK)
+	page.grid.add_vertical_segment(c, 0, r, Stroke.DARK)
 	
 	return page
 
 def render_two_grids_on_a4(g1, g2):
-	g1.render(Side.LEFT)
+	g1.render(Side.LEFT, 119)
 	g2.render(Side.RIGHT)
 
-print(
-"""
-%!PS-Adobe-3.0
-%%BoundingBox: 24 24 571 818
-%%Orientation: Portrait
-%%Pages: (atend)
-%%DocumentMedia: A4 595 842 0 () ()
-%%DocumentNeededResources: (atend)
-%%EndComments
-%%BeginPageSetup
-<< /PageSize [595 842] >> setpagedevice
-%%EndPageSetup
-"""
-)
+print_preamble()
 
 print("""
 newpath
