@@ -36,3 +36,6 @@ show
 translate
 } def
 """)
+
+def print_showpage():
+	print("showpage")
