@@ -1,3 +1,6 @@
+from math import ceil 
+
+from utils import *
 from grid import *
 
 class Text(object):
@@ -48,15 +51,21 @@ class Book:
 	
 	def render(self):
 		pages = self.pages
-		for i in range(0, len(pages) // 4):
-			if i + 3 < len(pages):
-				pages[i + 3].render(Side.LEFT, i + 4)
-			pages[i].render(Side.RIGHT, i + 1)
+
+		for i in range(0, ceil(len(pages) / 4)):
+
+			print_newpath()
+			if i * 4 + 3 < len(pages):
+				pages[i * 4 + 3].render(Side.LEFT, i * 4 + 4)
+
+			pages[i].render(Side.RIGHT, i * 4 + 1)
 			print_showpage()
-			if i + 1 < len(pages):
-				pages[i + 1].render(Side.LEFT, i + 2)
-			if i + 2 < len(pages):
-				pages[i + 2].render(Side.RIGHT, i + 3)
+
+			print_newpath()
+			if i * 4 + 1 < len(pages):
+				pages[i * 4 + 1].render(Side.LEFT, i * 4 + 2)
+			if i * 4 + 2 < len(pages):
+				pages[i * 4 + 2].render(Side.RIGHT, i * 4 + 3)
 			print_showpage()
 
 

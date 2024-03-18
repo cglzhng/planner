@@ -8,7 +8,7 @@ UNIT = 14
 GRID_WIDTH = 28
 GRID_HEIGHT = 40
 MARGIN_X = 13
-MARGIN_Y = 10
+MARGIN_Y = 15
 
 class Stroke(Enum):
 	BLANK = 1
