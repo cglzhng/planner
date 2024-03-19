@@ -23,21 +23,27 @@ class Page(object):
 		self.grid = Grid()
 		self.text = []
 	
-	def render(self, side, num=None):
+	def render(self, face, side, num=None):
+		if face == Side.TOP:
+			margin_x = MARGIN_X_TOP_SHEET
+			margin_y = MARGIN_Y_TOP_SHEET
+		if face == Side.BOTTOM:
+			margin_x = MARGIN_X_BOTTOM_SHEET
+			margin_y = MARGIN_Y_BOTTOM_SHEET
 		if side == Side.LEFT:
-			x = MARGIN_X
-			y = MARGIN_Y
+			x = margin_x
+			y = margin_y
 		if side == Side.RIGHT:
-			x = A4_WIDTH - MARGIN_X - GRID_WIDTH * UNIT
-			y = MARGIN_Y
+			x = A4_WIDTH - margin_x - GRID_WIDTH * UNIT
+			y = margin_y
 
 		self.grid.render(x, y)
 
 		if num is not None:
 			if side == Side.LEFT:
-				Text(str(num), 9, 5, 4).render(x, y)
+				Text(str(num), 7, 4, 3).render(x, y)
 			if side == Side.RIGHT:
-				Text(str(num), 9, (GRID_WIDTH - 1) * UNIT + 5, 4).render(x, y)
+				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + 4, 3).render(x, y)
 
 		for t in self.text:
 			t.render(x, y)
@@ -56,16 +62,16 @@ class Book:
 
 			print_newpath()
 			if i * 4 + 3 < len(pages):
-				pages[i * 4 + 3].render(Side.LEFT, i * 4 + 4)
+				pages[i * 4 + 3].render(Side.TOP, Side.LEFT, i * 4 + 4)
 
-			pages[i].render(Side.RIGHT, i * 4 + 1)
+			pages[i].render(Side.TOP, Side.RIGHT, i * 4 + 1)
 			print_showpage()
 
 			print_newpath()
 			if i * 4 + 1 < len(pages):
-				pages[i * 4 + 1].render(Side.LEFT, i * 4 + 2)
+				pages[i * 4 + 1].render(Side.BOTTOM, Side.LEFT, i * 4 + 2)
 			if i * 4 + 2 < len(pages):
-				pages[i * 4 + 2].render(Side.RIGHT, i * 4 + 3)
+				pages[i * 4 + 2].render(Side.BOTTOM, Side.RIGHT, i * 4 + 3)
 			print_showpage()
 
 

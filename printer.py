@@ -30,11 +30,11 @@ def print_preamble():
 %%DocumentNeededResources: (atend)
 %%EndComments
 %%BeginPageSetup
-<< /PageSize [595 842] >> setpagedevice
+<< /PageSize [595 842] /Duplex true /Tumble true >> setpagedevice
 %%EndPageSetup
 /LINE { newpath moveto lineto } def
-/LIGHT { [0.30 1.10] 0.15 setdash stroke } def
-/DARK { [0.30 0.70] 0.15 setdash stroke } def
+/LIGHT { [0.20 0.80] 0.10 setdash stroke } def
+/DARK { [0.20 0.40] 0.10 setdash stroke } def
 /T_HORIZ {
 translate
 270 rotate
