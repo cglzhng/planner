@@ -34,7 +34,7 @@ class Page(object):
 			x = margin_x
 			y = margin_y
 		if side == Side.RIGHT:
-			x = A4_WIDTH - margin_x - GRID_WIDTH * UNIT
+			x = margin_x + GRID_WIDTH * UNIT + MARGIN_GAP
 			y = margin_y
 
 		self.grid.render(x, y)
@@ -57,21 +57,34 @@ class Book:
 	
 	def render(self):
 		pages = self.pages
+		sheets = ceil(len(pages) / 4)
 
-		for i in range(0, ceil(len(pages) / 4)):
+		for s in range(0, sheets):
+			i = s * 2 
 
 			print_newpath()
-			if i * 4 + 3 < len(pages):
-				pages[i * 4 + 3].render(Side.TOP, Side.LEFT, i * 4 + 4)
 
-			pages[i].render(Side.TOP, Side.RIGHT, i * 4 + 1)
+			# the ith last page
+			n = sheets * 4 - i - 1
+			if n < len(pages):
+				pages[n].render(Side.TOP, Side.LEFT, n + 1)
+
+			# the ith page
+			pages[i].render(Side.TOP, Side.RIGHT, i + 1)
+
 			print_showpage()
 
 			print_newpath()
-			if i * 4 + 1 < len(pages):
-				pages[i * 4 + 1].render(Side.BOTTOM, Side.LEFT, i * 4 + 2)
-			if i * 4 + 2 < len(pages):
-				pages[i * 4 + 2].render(Side.BOTTOM, Side.RIGHT, i * 4 + 3)
+
+			# the (i + 1)th page
+			n = i + 1
+			if n < len(pages):
+				pages[n].render(Side.BOTTOM, Side.LEFT, n + 1)
+
+			# the (i + 1)th last page
+			n = sheets * 4 - i - 2
+			if n < len(pages):
+				pages[n].render(Side.BOTTOM, Side.RIGHT, n + 1)
 			print_showpage()
 
 

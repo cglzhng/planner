@@ -15,6 +15,9 @@ book.add_page(page)
 book.add_page(page)
 book.add_page(page)
 book.add_page(page)
+book.add_page(page)
+book.add_page(page)
+book.add_page(page)
 
 book.render()
 
