@@ -40,10 +40,16 @@ class Page(object):
 		self.grid.render(x, y)
 
 		if num is not None:
+			if len(str(num)) == 1:
+				t_x = 4
+				t_y = 3
+			if len(str(num)) == 2:
+				t_x = 3
+				t_y = 3
 			if side == Side.LEFT:
-				Text(str(num), 7, 4, 3, PAGE_NUMBER_COLOR).render(x, y)
+				Text(str(num), 7, t_x, t_y, PAGE_NUMBER_COLOR).render(x, y)
 			if side == Side.RIGHT:
-				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + 4, 3, PAGE_NUMBER_COLOR).render(x, y)
+				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + t_x, t_y, PAGE_NUMBER_COLOR).render(x, y)
 
 		for t in self.text:
 			t.render(x, y)

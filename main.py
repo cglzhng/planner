@@ -11,13 +11,9 @@ print_preamble()
 book = Book()
 page = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
 
-book.add_page(page)
-book.add_page(page)
-book.add_page(page)
-book.add_page(page)
-book.add_page(page)
-book.add_page(page)
-book.add_page(page)
+
+for i in range(0, 48):
+	book.add_page(page)
 
 book.render()
 
