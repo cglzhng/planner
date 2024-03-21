@@ -1,5 +1,8 @@
 from constants import *
 
+def print_set_color(color):
+	print(f"{color.c} {color.m} {color.y} {color.k} setcmykcolor")
+
 def print_stroke(stroke):
 	if stroke == Stroke.LIGHT:
 		print("LIGHT")
@@ -9,8 +12,9 @@ def print_stroke(stroke):
 def print_line(x1, y1, x2, y2):
 	print(f"{x1} {y1} {x2} {y2} LINE")
 
-def print_text_horizontal(text, size, x, y):
-	print(f"{-x} {-y} ({text}) {x} {y} /Iosevka findfont {size} scalefont setfont T_HORIZ")
+def print_text_horizontal(text, size, x, y, color):
+	print_set_color(color)
+	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
 
 def print_showpage():
 	print("showpage")
@@ -44,3 +48,8 @@ show
 translate
 } def
 """)
+	print_font()
+
+def print_font():
+	with open("iosevka-regular.t42") as f:
+		print(f.read())

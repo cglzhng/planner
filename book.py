@@ -4,19 +4,19 @@ from utils import *
 from grid import *
 
 class Text(object):
-	def __init__(self, text, size, x, y, orientation=Orientation.HORIZONTAL):
+	def __init__(self, text, size, x, y, color=BLACK, orientation=Orientation.HORIZONTAL):
 		self.text = text
 		self.size = size
 		self.x = x
 		self.y = y
 		self.orientation = orientation
+		self.color = color
 	
 	def render(self, rx, ry):
 		x_real = ry + self.y
 		y_real = A4_WIDTH - rx - self.x
 
-		print_text_horizontal(self.text, self.size, x_real, y_real)
-			
+		print_text_horizontal(self.text, self.size, x_real, y_real, self.color)
 
 class Page(object):
 	def __init__(self):
@@ -41,9 +41,9 @@ class Page(object):
 
 		if num is not None:
 			if side == Side.LEFT:
-				Text(str(num), 7, 4, 3).render(x, y)
+				Text(str(num), 7, 4, 3, PAGE_NUMBER_COLOR).render(x, y)
 			if side == Side.RIGHT:
-				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + 4, 3).render(x, y)
+				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + 4, 3, PAGE_NUMBER_COLOR).render(x, y)
 
 		for t in self.text:
 			t.render(x, y)
@@ -55,11 +55,17 @@ class Book:
 	def add_page(self, page):
 		self.pages.append(page)
 	
-	def render(self):
+	def render(self, num_spreads=None):
 		pages = self.pages
 		sheets = ceil(len(pages) / 4)
 
-		for s in range(0, sheets):
+		print_range = sheets
+		if num_spreads != None:
+			print_range = min(sheets, ceil(num_spreads / 2))
+
+		eprint(print_range)
+
+		for s in range(0, print_range):
 			i = s * 2 
 
 			print_newpath()
@@ -73,6 +79,9 @@ class Book:
 			pages[i].render(Side.TOP, Side.RIGHT, i + 1)
 
 			print_showpage()
+
+			if num_spreads != None and num_spreads % 2 == 1:
+				break
 
 			print_newpath()
 

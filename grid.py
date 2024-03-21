@@ -164,6 +164,9 @@ class Grid(object):
 	def render(self, x, y):
 		x_real = y
 		y_real = A4_WIDTH - x - GRID_WIDTH * UNIT 
+
+		print_set_color(BLACK)
+
 		# vertical lines get printed as horizontal
 		# they are also printed top-to-bottom
 		for i, line in enumerate(self.vertical):
