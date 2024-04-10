@@ -13,6 +13,9 @@ MARGIN_X_BOTTOM_SHEET = 22
 MARGIN_Y_BOTTOM_SHEET = 25
 MARGIN_GAP = 28
 
+CALENDAR_DAY_WIDTH = 8
+CALENDAR_DAY_HEIGHT = 7
+
 class Stroke(Enum):
 	BLANK = 1
 	LIGHT = 2
@@ -38,3 +41,11 @@ class Color(object):
 BLACK = Color(0, 0, 0, 1)
 PAGE_NUMBER_COLOR = Color(0.40, 0.40, 0, 0)
 
+class Weekday(Enum):
+	MONDAY = 1
+	TUESDAY = 2
+	WEDNESDAY = 3
+	THURSDAY = 4
+	FRIDAY = 5
+	SATURDAY = 6 
+	SUNDAY = 7
