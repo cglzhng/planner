@@ -279,7 +279,7 @@ class Grid(object):
 
 	def render(self, x, y):
 		x_real = y
-		y_real = A4_WIDTH - x - GRID_WIDTH * UNIT 
+		y_real = PAPER_WIDTH - x - GRID_WIDTH * UNIT 
 
 		print_set_color(BLACK)
 

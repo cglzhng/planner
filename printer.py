@@ -25,12 +25,22 @@ def print_newpath():
 	print("0.12 setlinewidth")
 
 def print_preamble():
+	match BOOK_SIZE:
+		case PaperSize.A5:
+			paper = "A4"
+		case PaperSize.A6:
+			paper = "A5"
+
 	print("""
 %!PS-Adobe-3.0
 %%BoundingBox: 24 24 571 818
 %%Orientation: Portrait
 %%Pages: (atend)
-%%DocumentMedia: A4 595 842 0 () ()
+""")
+	print(f"""
+%%DocumentMedia: {paper} {PAPER_HEIGHT} {PAPER_WIDTH} 0 () ()
+""")
+	print("""
 %%DocumentNeededResources: (atend)
 %%EndComments
 %%BeginPageSetup
@@ -51,5 +61,5 @@ translate
 	print_font()
 
 def print_font():
-	with open("iosevka-regular.t42") as f:
+	with open(f"{FONT_FILE}") as f:
 		print(f.read())

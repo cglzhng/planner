@@ -6,8 +6,6 @@ from printer import *
 from layout import *
 from book import *
 
-test_insert_segment()
-
 print_preamble()
 
 book = Book()

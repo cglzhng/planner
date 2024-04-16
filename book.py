@@ -4,24 +4,39 @@ from utils import *
 from grid import *
 
 class Text(object):
-	def __init__(self, text, size, x, y, color=BLACK, orientation=Orientation.HORIZONTAL):
+	def __init__(self, text, size, color=BLACK, orientation=Orientation.HORIZONTAL):
 		self.text = text
 		self.size = size
-		self.x = x
-		self.y = y
 		self.orientation = orientation
 		self.color = color
+		self.x = 0
+		self.y = 0
+	
+	def set_to(self, x, y):
+		self.x = x
+		self.y = y
+	
+	def center_in(self, x, y, width, height):
+		length = len(self.text) * self.size["size"] * self.size["width_ratio"]
+		t_x = (width * UNIT - length) / 2
+		t_y = (height * UNIT - self.size["size"] * self.size["height_ratio"]) / 2
+		self.x = x * UNIT + t_x
+		self.y = y * UNIT + t_y
+		
 	
 	def render(self, rx, ry):
 		x_real = ry + self.y
-		y_real = A4_WIDTH - rx - self.x
+		y_real = PAPER_WIDTH - rx - self.x
 
-		print_text_horizontal(self.text, self.size, x_real, y_real, self.color)
+		print_text_horizontal(self.text, self.size["size"], x_real, y_real, self.color)
 
 class Page(object):
 	def __init__(self):
 		self.grid = Grid()
 		self.text = []
+
+	def add_text(self, text):
+		self.text.append(text)
 	
 	def render(self, face, side, num=None):
 		if face == Side.TOP:
@@ -40,16 +55,12 @@ class Page(object):
 		self.grid.render(x, y)
 
 		if num is not None:
-			if len(str(num)) == 1:
-				t_x = 4
-				t_y = 3
-			if len(str(num)) == 2:
-				t_x = 3
-				t_y = 3
+			t = Text(str(num), FONT["Tiny"], LIGHT_PURPLE)
 			if side == Side.LEFT:
-				Text(str(num), 7, t_x, t_y, PAGE_NUMBER_COLOR).render(x, y)
+				t.center_in(0, 0, 1, 1)
 			if side == Side.RIGHT:
-				Text(str(num), 7, (GRID_WIDTH - 1) * UNIT + t_x, t_y, PAGE_NUMBER_COLOR).render(x, y)
+				t.center_in(GRID_WIDTH - 1, 0, 1, 1)
+			t.render(x, y)
 
 		for t in self.text:
 			t.render(x, y)
@@ -68,8 +79,6 @@ class Book:
 		print_range = sheets
 		if num_spreads != None:
 			print_range = min(sheets, ceil(num_spreads / 2))
-
-		eprint(print_range)
 
 		for s in range(0, print_range):
 			i = s * 2 
