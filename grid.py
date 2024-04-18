@@ -277,36 +277,28 @@ class Grid(object):
 		self.add_vertical_segment(x, y, y + height, stroke)
 		self.add_vertical_segment(x + width, y, y + height, stroke)
 
-	def render(self, x, y):
-		x_real = y
-		y_real = PAPER_WIDTH - x - GRID_WIDTH * UNIT 
-
-		print_set_color(BLACK)
-
-		# vertical lines get printed as horizontal
-		# they are also printed top-to-bottom
+	def render(self, printer, x, y):
 		for i, line in enumerate(self.vertical):
 			for segment in line:
 				if segment.stroke == Stroke.BLANK:
 					continue
-				print_line(
-					segment.start * UNIT + x_real,
-					(len(self.vertical) - i - 1) * UNIT + y_real,
-					segment.end * UNIT + x_real,
-					(len(self.vertical) - i - 1) * UNIT + y_real,
+				printer.draw_line(
+					x + i * UNIT, 
+					y + segment.start * UNIT,
+					x + i * UNIT, 
+					y + segment.end * UNIT,
+					segment.stroke,
 				)
-				print_stroke(segment.stroke)
 
-		# horizontal lines get printed as vertical	
 		for i, line in enumerate(self.horizontal):
 			for segment in line:
 				if segment.stroke == Stroke.BLANK:
 					continue
-				print_line(
-					i * UNIT + x_real,
-					(len(self.vertical) - segment.start - 1) * UNIT + y_real,
-					i * UNIT + x_real, 
-					(len(self.vertical) - segment.end - 1) * UNIT + y_real,
+				printer.draw_line(
+					x + segment.start * UNIT,
+					y + i * UNIT, 
+					x + segment.end * UNIT,
+					y + i * UNIT,
+					segment.stroke,
 				)
-				print_stroke(segment.stroke)
 

@@ -7,8 +7,22 @@ A5_WIDTH = 595
 A5_HEIGHT = 420
 
 class PaperSize(Enum):
-	A5 = 1
-	A6 = 2
+	A4 = "A4"
+	A5 = "A5"
+	A6 = "A6"
+
+PAPERS = {
+	"A4": {
+		"name": "A4",
+		"height": 842,
+		"width": 595,
+	},
+	"A5": {
+		"name": "A5",
+		"width": 595,
+		"height": 420,
+	},
+}
 
 BOOK_SIZE = PaperSize.A5
 
@@ -77,7 +91,7 @@ class Weekday(Enum):
 	SATURDAY = 6 
 	SUNDAY = 7
 
-Fonts = {
+FONTS = {
 	"Iosevka": {
 		"Tiny": {
 			"size": 7,
@@ -93,4 +107,4 @@ Fonts = {
 }
 
 FONT_FILE = "iosevka-regular.t42"
-FONT = Fonts["Iosevka"]
+FONT = FONTS["Iosevka"]

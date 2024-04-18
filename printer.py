@@ -1,76 +1,272 @@
+from dataclasses import dataclass
+
 from constants import *
+from utils import *
+from ps import *
 
-def print_set_color(color):
-	print(f"{color.c} {color.m} {color.y} {color.k} setcmykcolor")
+@dataclass
+class Measurements:
+	top_line_count: int
+	bottom_line_count: int
+	left_line_count: int
+	right_line_count: int
 
-def print_stroke(stroke):
-	if stroke == Stroke.LIGHT:
-		print("LIGHT")
-	if stroke == Stroke.DARK:
-		print("DARK")
-	if stroke == Stroke.SOLID:
-		print("SOLID")
+	# In mm
+	top_margin_top_side: float
+	bottom_margin_top_side: float
+	left_margin_top_side: float
+	right_margin_top_side: float
 
-def print_line(x1, y1, x2, y2):
-	print(f"{x1} {y1} {x2} {y2} LINE")
+	# In mm
+	top_margin_bottom_side: float
+	bottom_margin_bottom_side: float
+	left_margin_bottom_side: float
+	right_margin_bottom_side: float
 
-def print_text_horizontal(text, size, x, y, color):
-	print_set_color(color)
-	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
 
-def print_showpage():
-	print("showpage")
+class Printer(object):
+	def __init__(self, paper, orientation, measurements):
+		self.paper = paper
+		self.orientation = orientation
+		self.measurements = measurements
 
-def print_newpath():
-	print("newpath")
-	print("0 0 0 1 setcmykcolor")
-	print("0.12 setlinewidth")
+		self.set_values()
 
-def print_preamble():
-	match BOOK_SIZE:
-		case PaperSize.A5:
-			paper = "A4"
-		case PaperSize.A6:
-			paper = "A5"
+		self.side = Side.TOP
 
-	print("""
-%!PS-Adobe-3.0
-""")
-	print(f"""
-%%BoundingBox: 0 0 {PAPER_HEIGHT - 0} {PAPER_WIDTH - 0}
-""")
-	print("""
-%%Orientation: Portrait
-%%Pages: (atend)
-""")
-	print(f"""
-%%DocumentMedia: {paper} {PAPER_HEIGHT} {PAPER_WIDTH} 0 () ()
-""")
-	print("""
-%%DocumentNeededResources: (atend)
-%%EndComments
-%%BeginPageSetup
-""")
-	print(f"""
-<< /PageSize [{PAPER_HEIGHT} {PAPER_WIDTH}] /Duplex true /Tumble true >> setpagedevice
-""")
-	print("""
-%%EndPageSetup
-/LINE { newpath moveto lineto } def
-/LIGHT { [0.20 0.80] 0.10 setdash stroke } def
-/DARK { [0.20 0.40] 0.10 setdash stroke } def
-/SOLID { [] 0 setdash stroke } def
-/T_HORIZ {
-translate
-270 rotate
-0 0 moveto
-show
-90 rotate
-translate
-} def
-""")
-	print_font()
+	def start(self):
+		print_preamble(self.paper)
+	
+	def end(self):
+		print_end()
+	
+	def set_values(self):
+		m = self.measurements
+		paper = self.paper
 
-def print_font():
-	with open(f"{FONT_FILE}") as f:
-		print(f.read())
+		y_min = 20 - m.bottom_line_count + 1
+		y_max = paper["height"] - (20 - m.top_line_count + 1)
+		x_min = 20 - m.left_line_count + 1
+		x_max = paper["width"] - (20 - m.right_line_count + 1)
+
+		# Add 2 for tolerance
+		self.margin_y = mm_to_point(max(
+			m.top_margin_bottom_side,
+			m.bottom_margin_bottom_side,
+			m.top_margin_top_side,
+			m.bottom_margin_top_side,
+		)) + 2
+
+		# Since the margins are different on both sides, we must have a different y_min and y_max for both sides of the paper.
+
+		d = self.margin_y - mm_to_point(m.bottom_margin_bottom_side)
+		self.y_min_bottom = y_min + d
+
+		d = self.margin_y - mm_to_point(m.top_margin_bottom_side)
+		self.y_max_bottom = y_max - d
+
+		d = self.margin_y - mm_to_point(m.bottom_margin_top_side)
+		self.y_min_top = y_min + d
+
+		d = self.margin_y - mm_to_point(m.top_margin_top_side)
+		self.y_max_top = y_max - d
+		
+		# Add 2 for tolerance
+		self.margin_x = mm_to_point(max(
+			m.left_margin_top_side,
+			m.right_margin_top_side,
+			m.left_margin_bottom_side,
+			m.right_margin_bottom_side,
+		)) + 2
+
+		# Since the margins are different on both sides, we must have a different x_min and x_max for both sides of the paper.
+		
+		d = self.margin_x - mm_to_point(m.left_margin_bottom_side)
+		self.x_min_bottom = x_min + d
+
+		d = self.margin_x - mm_to_point(m.right_margin_bottom_side)
+		self.x_max_bottom = x_max - d
+
+		d = self.margin_x - mm_to_point(m.left_margin_top_side)
+		self.x_min_top = x_min + d
+
+		d = self.margin_x - mm_to_point(m.right_margin_top_side)
+		self.x_max_top = x_max - d
+
+	def _get_min_max(self):
+		if self.side == Side.TOP:
+			return (
+				self.x_min_top,
+				self.y_min_top,
+				self.x_max_top,
+				self.y_max_top,
+			)
+		if self.side == Side.BOTTOM:
+			return (
+				self.x_min_bottom,
+				self.y_min_bottom,
+				self.x_max_bottom,
+				self.y_max_bottom,
+			)
+		
+	def get_width(self):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		if self.orientation == Orientation.HORIZONTAL:
+			return y_max - y_min
+		if self.orientation == Orientation.VERTICAL:
+			return x_max - x_min
+	
+	def get_height(self):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		if self.orientation == Orientation.HORIZONTAL:
+			return x_max - x_min
+		if self.orientation == Orientation.VERTICAL:
+			return y_max - y_min
+	
+	def draw_text(self, text, x, y, size=12, color=BLACK, orientation=Orientation.HORIZONTAL):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		if (self.orientation == Orientation.HORIZONTAL):
+			if orientation == Orientation.HORIZONTAL:
+				print_text_vertical(text, size, x_min + y, y_max - x, color)
+	
+	def draw_line(self, x1, y1, x2, y2, stroke):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		print_newpath()
+
+		if (self.orientation == Orientation.HORIZONTAL):
+			print_line(x_min + y1, y_max - x1, x_min + y2, y_max - x2)
+
+		print_stroke(stroke)
+
+	def draw_center_rectangle(self):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		print_newpath()
+
+		print_line(x_min, y_min, x_min, y_max)
+		print_stroke(Stroke.SOLID)
+		print_line(x_min, y_max, x_max, y_max)
+		print_stroke(Stroke.SOLID)
+		print_line(x_max, y_max, x_max, y_min)
+		print_stroke(Stroke.SOLID)
+		print_line(x_max, y_min, x_min, y_min)
+		print_stroke(Stroke.SOLID)
+
+	def next_page(self):
+		print_showpage()
+		if self.side == Side.TOP:
+			self.side = Side.BOTTOM
+		else:
+			self.side = Side.TOP
+	
+	def debug_center_rectangle_duplex(self):
+		self.draw_center_rectangle()
+		self.draw_text("TOP", 10, 10)
+		self.next_page()
+
+		self.draw_center_rectangle()
+		self.draw_text("BOTTOM", 10, 10)
+		self.next_page()
+
+
+
+
+
+
+
+
+# Count the number of lines printed at the bottom (n1). Then 20 - n1 + 1 is the minimum y (y_min) that we can print.
+# Count the number of lines printed at the top (n2). Then A4_WIDTH - (20 - n2 + 1) is the maximum y (y_max) that we can print. 
+# And, y_max - y_min is the height of the maximum area that we can print.
+#
+# Next, measure (with a ruler) the actual margins at the top and bottom, in mm.
+#
+# The larger margin must be used in order to create a symmetric image. 
+# 
+# FINDINGS:
+# n1 = 7
+# n2 = 7
+#
+# Top margin on bottom side: 4.7mm
+# Bottom margin on bottom side: 4mm
+#
+# Top margin on top side: 4.5mm
+# Bottom margin on top side: 3.8mm
+def height_calibration_print():
+	for i in range(0, 20):
+		print_newpath()
+		print_line(0, i, 100, i) 
+		print_stroke(Stroke.SOLID)
+	
+	for i in range(0, 20):
+		print_newpath()
+		print_line(0, A4_WIDTH - i, 100, A4_WIDTH - i)
+		print_stroke(Stroke.SOLID)
+	
+	print_text_vertical("TOP", 12, 100, 100, BLACK)
+
+	print_showpage()
+
+	for i in range(0, 20):
+		print_newpath()
+		print_line(0, i, 100, i) 
+		print_stroke(Stroke.SOLID)
+	
+	for i in range(0, 20):
+		print_newpath()
+		print_line(0, A4_WIDTH - i, 100, A4_WIDTH - i)
+		print_stroke(Stroke.SOLID)
+
+	print_text_vertical("BOTTOM", 12, 100, 100, BLACK)
+
+
+# Count the number of lines printed at the left (n1). Then 20 - n1 + 1 is the minimum x (x_min) that we can print.
+# Count the number of lines printed at the right (n2). Then A4_HEIGHT - (20 - n2 + 1) is the maximum x (x_max) that we can print. 
+# And, x_max - x_min is the width of the maximum area that we can print.
+#
+# Next, measure (with a ruler) the actual margins at the left and right, in mm.
+# 
+# The larger margin must be used in order to create a symmetric image.
+# 
+# FINDINGS:
+# n1 = 7
+# n2 = 8
+#
+# Left margin on bottom side: 4mm
+# Right margin on bottom side: 4.8mm
+#
+# Left margin on top side: 7mm
+# Right margin on top side: 1.1mm
+#
+# Since there is a difference between the two sides of the paper, we must also take that into account.
+def width_calibration_print():
+	for i in range(0, 20):
+		print_newpath()
+		print_line(i, 0, i, 100) 
+		print_stroke(Stroke.SOLID)
+	
+	for i in range(0, 20):
+		print_newpath()
+		print_line(A4_HEIGHT - i, 0, A4_HEIGHT - i, 100)
+		print_stroke(Stroke.SOLID)
+
+	print_text_vertical("TOP", 12, 100, 100, BLACK)
+
+	print_showpage()
+
+	for i in range(0, 20):
+		print_newpath()
+		print_line(i, 0, i, 100) 
+		print_stroke(Stroke.SOLID)
+	
+	for i in range(0, 20):
+		print_newpath()
+		print_line(A4_HEIGHT - i, 0, A4_HEIGHT - i, 100)
+		print_stroke(Stroke.SOLID)
+
+	print_text_vertical("BOTTOM", 12, 100, 100, BLACK)
+
