@@ -9,6 +9,7 @@ var filedata = fs.readFileSync(filename);
 
 const letter = "na_letter_8.5x11in";
 const A4 = "iso_a4_210x297mm";
+const A5 = "iso_a5_148x210mm";
 
 console.log(filedata);
 

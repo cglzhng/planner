@@ -8,6 +8,8 @@ def print_stroke(stroke):
 		print("LIGHT")
 	if stroke == Stroke.DARK:
 		print("DARK")
+	if stroke == Stroke.SOLID:
+		print("SOLID")
 
 def print_line(x1, y1, x2, y2):
 	print(f"{x1} {y1} {x2} {y2} LINE")
@@ -33,7 +35,11 @@ def print_preamble():
 
 	print("""
 %!PS-Adobe-3.0
-%%BoundingBox: 24 24 571 818
+""")
+	print(f"""
+%%BoundingBox: 0 0 {PAPER_HEIGHT - 0} {PAPER_WIDTH - 0}
+""")
+	print("""
 %%Orientation: Portrait
 %%Pages: (atend)
 """)
@@ -44,11 +50,16 @@ def print_preamble():
 %%DocumentNeededResources: (atend)
 %%EndComments
 %%BeginPageSetup
-<< /PageSize [595 842] /Duplex true /Tumble true >> setpagedevice
+""")
+	print(f"""
+<< /PageSize [{PAPER_HEIGHT} {PAPER_WIDTH}] /Duplex true /Tumble true >> setpagedevice
+""")
+	print("""
 %%EndPageSetup
 /LINE { newpath moveto lineto } def
 /LIGHT { [0.20 0.80] 0.10 setdash stroke } def
 /DARK { [0.20 0.40] 0.10 setdash stroke } def
+/SOLID { [] 0 setdash stroke } def
 /T_HORIZ {
 translate
 270 rotate

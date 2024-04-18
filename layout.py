@@ -43,7 +43,7 @@ def make_month_header(left, right):
 	right.grid.add_horizontal_segment(GRID_HEIGHT - 2, 0, 4 * CALENDAR_DAY_WIDTH, Stroke.DARK)
 	right.grid.add_horizontal_segment(GRID_HEIGHT - 1, 0, 4 * CALENDAR_DAY_WIDTH, Stroke.BLANK)
 
-	days = ["MONDAY", "TUESDAY", "WEDNESDAY"]
+	days = ["Monday", "Tuesday", "Wednesday"]
 	for i in range(0, 3):
 		x = GRID_WIDTH - 3 * CALENDAR_DAY_WIDTH
 		left.grid.add_vertical_segment(x + i * CALENDAR_DAY_WIDTH, GRID_HEIGHT - 2, GRID_HEIGHT, Stroke.DARK)

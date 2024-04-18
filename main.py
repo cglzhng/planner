@@ -5,17 +5,18 @@ from grid import *
 from printer import *
 from layout import *
 from book import *
+from calibration import *
 
 print_preamble()
+
+"""
 
 book = Book()
 
 page = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
 
-"""
-for i in range(0, 48):
-	book.add_page(page)
-"""
+# for i in range(0, 48):
+# 	book.add_page(page)
 
 page1, page2 = make_month(31, Weekday.SATURDAY)
 book.add_page(page)
@@ -24,7 +25,11 @@ book.add_page(page2)
 
 
 
+
 book.render()
+"""
+
+draw_centered_rectangle()
 
 print(
 """

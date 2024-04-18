@@ -8,7 +8,7 @@ var msg = {
   }
 };
 
-Printer.execute("Get-Job-Attributes", msg, function(err, res) {
+Printer.execute("Get-Printer-Attributes", msg, function(err, res) {
         console.log(err);
         console.log(res);
 });

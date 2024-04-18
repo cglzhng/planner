@@ -10,7 +10,7 @@ class PaperSize(Enum):
 	A5 = 1
 	A6 = 2
 
-BOOK_SIZE = PaperSize.A6
+BOOK_SIZE = PaperSize.A5
 
 match BOOK_SIZE:
 	case PaperSize.A5:
@@ -44,6 +44,7 @@ class Stroke(Enum):
 	BLANK = 1
 	LIGHT = 2
 	DARK = 3
+	SOLID = 4
 
 class Orientation(Enum):
 	HORIZONTAL = 1
