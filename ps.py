@@ -35,14 +35,14 @@ def print_preamble(paper):
 %!PS-Adobe-3.0
 """)
 	print(f"""
-%%BoundingBox: 0 0 {height - 0} {width - 0}
+%%BoundingBox: 0 0 {width - 0} {height - 0}
 """)
 	print("""
 %%Orientation: Portrait
 %%Pages: (atend)
 """)
 	print(f"""
-%%DocumentMedia: {name} {height} {width} 0 () ()
+%%DocumentMedia: {name} {width} {height} 0 () ()
 """)
 	print("""
 %%DocumentNeededResources: (atend)
@@ -50,7 +50,7 @@ def print_preamble(paper):
 %%BeginPageSetup
 """)
 	print(f"""
-<< /PageSize [{height} {width}] /Duplex true /Tumble true >> setpagedevice
+<< /PageSize [{width} {height}] /Duplex true /Tumble true >> setpagedevice
 """)
 	print("""
 %%EndPageSetup

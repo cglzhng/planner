@@ -49,13 +49,12 @@ class Printer(object):
 		x_min = 20 - m.left_line_count + 1
 		x_max = paper["width"] - (20 - m.right_line_count + 1)
 
-		# Add 2 for tolerance
 		self.margin_y = mm_to_point(max(
 			m.top_margin_bottom_side,
 			m.bottom_margin_bottom_side,
 			m.top_margin_top_side,
 			m.bottom_margin_top_side,
-		)) + 2
+		))
 
 		# Since the margins are different on both sides, we must have a different y_min and y_max for both sides of the paper.
 
@@ -71,13 +70,12 @@ class Printer(object):
 		d = self.margin_y - mm_to_point(m.top_margin_top_side)
 		self.y_max_top = y_max - d
 		
-		# Add 2 for tolerance
 		self.margin_x = mm_to_point(max(
 			m.left_margin_top_side,
 			m.right_margin_top_side,
 			m.left_margin_bottom_side,
 			m.right_margin_bottom_side,
-		)) + 2
+		))
 
 		# Since the margins are different on both sides, we must have a different x_min and x_max for both sides of the paper.
 		
