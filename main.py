@@ -41,35 +41,19 @@ measurements = Measurements(
 )
 
 p = Printer(PAPERS["A4"], Orientation.HORIZONTAL, measurements)
-width = p.get_width()
-height = p.get_height()
-eprint(f"{width} {height}")
-eprint(f"{point_to_mm(width)} {point_to_mm(height)}")
 p.start()
-x_min, y_min, x_max, y_max = p._get_min_max()
-eprint(f"{x_min} {y_min} {x_max} {y_max}")
 
 page = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
 
-p.draw_center_rectangle()
-page.grid.render(p, 0, 0)
+book = Book()
 
-p.next_page()
-x_min, y_min, x_max, y_max = p._get_min_max()
-eprint(f"{x_min} {y_min} {x_max} {y_max}")
+for i in range(0, 48):
+ 	book.add_page(page)
 
-p.draw_center_rectangle()
-page.grid.render(p, 0, 0)
+book.render(p)
 
 
 """
-
-book = Book()
-
-
-# for i in range(0, 48):
-# 	book.add_page(page)
-
 page1, page2 = make_month(31, Weekday.SATURDAY)
 book.add_page(page)
 book.add_page(page1)
