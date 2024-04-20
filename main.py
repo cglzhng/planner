@@ -40,18 +40,17 @@ measurements = Measurements(
 	right_margin_bottom_side = RIGHT_MARGIN_BOTTOM_SIDE,
 )
 
-p = Printer(PAPERS["A4"], Orientation.HORIZONTAL, measurements)
+p = Printer(PAPER, PAPER_ORIENTATION, measurements)
 p.start()
 
-page = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
+layout = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
 
 book = Book()
 
-for i in range(0, 48):
- 	book.add_page(page)
+for i in range(0, 11):
+ 	book.add_layout(layout)
 
 book.render(p)
-
 
 """
 page1, page2 = make_month(31, Weekday.SATURDAY)
@@ -59,10 +58,6 @@ book.add_page(page)
 book.add_page(page1)
 book.add_page(page2)
 
-
-
-
-book.render()
 """
 
 p.end()

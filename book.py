@@ -27,7 +27,7 @@ class Text(object):
 	def render(self, printer, rx, ry):
 		printer.draw_text(self.text, rx + self.x, ry + self.y, self.size["size"], self.color, self.orientation)
 
-class Page(object):
+class Layout(object):
 	def __init__(self):
 		self.grid = Grid()
 		self.text = []
@@ -35,21 +35,20 @@ class Page(object):
 	def add_text(self, text):
 		self.text.append(text)
 	
-	def render(self, printer, side, num=None):
+	def render(self, printer, side, col, row, num=None):
 		width_full = printer.get_width()
 		height_full = printer.get_height()
 
 		width = GRID_WIDTH * UNIT
 		height = GRID_HEIGHT * UNIT
 
-		margin_x = (width_full - 2 * width - MARGIN_GAP) / 2
+		margin_x = (width_full - PAGE_COLS * width - (PAGE_COLS - 1) * GAP_COL) / 2
 
-		if side == Side.LEFT:
-			x = margin_x
-		if side == Side.RIGHT:
-			x = width_full - margin_x - width
+		x = margin_x + col * (width + GAP_COL)
 
-		y = (height_full - height) / 2
+		margin_y = (height_full - PAGE_ROWS * height - (PAGE_ROWS - 1) * GAP_ROW) / 2
+
+		y = margin_y + row * (height + GAP_ROW)
 
 		self.grid.render(printer, x, y)
 
@@ -66,47 +65,69 @@ class Page(object):
 
 class Book:
 	def __init__(self):
-		self.pages = []
+		self.layouts = []
 	
-	def add_page(self, page):
-		self.pages.append(page)
+	def add_layout(self, layout):
+		self.layouts.append(layout)
 	
-	def render(self, printer, num_spreads=None):
-		pages = self.pages
-		sheets = ceil(len(pages) / 4)
+	def _render_layouts_by_index(self, printer, layout_params):
+		i = 0 
+		for y in range(0, PAGE_ROWS):
+			for x in range(0, PAGE_COLS):
+				if i < len(layout_params):
+					layout_index, layout_side = layout_params[i]
+					if layout_index < len(self.layouts):
+						self.layouts[layout_index].render(printer, layout_side, x, y, layout_index + 1)
+				i = i + 1
+	
+	def render(self, printer, max_pages=None):
+		layouts_per_page = PAGE_ROWS * PAGE_COLS
+
+		layouts = self.layouts
+		sheets = ceil(len(layouts) / (layouts_per_page * 2))
 
 		print_range = sheets
-		if num_spreads != None:
-			print_range = min(sheets, ceil(num_spreads / 2))
+		if max_pages != None:
+			print_range = min(pages, ceil(max_pages / 2))
+
+		folds = []
+		num_folds = ceil(len(self.layouts) / 4)
+		for f in range(0, num_folds):
+			fold = [
+				f * 2,
+				f * 2 + 1,
+				num_folds * 4 - (f * 2 + 1) - 1,
+				num_folds * 4 - (f * 2) - 1,
+			]
+			folds.append(fold)
+
+		eprint(folds)
 
 		for s in range(0, print_range):
-			i = s * 2 
+			i = s * (layouts_per_page // 2)
 
 			printer.draw_center_rectangle()
 
-			# the ith last page
-			n = sheets * 4 - i - 1
-			if n < len(pages):
-				pages[n].render(printer, Side.LEFT, n + 1)
+			to_render = []
+			for l in range(0, ceil(layouts_per_page / 2)):
+				if i + l < len(folds):
+					fold = folds[i + l]
+					eprint(fold)
+					to_render.append((fold[3], Side.LEFT))
+					to_render.append((fold[0], Side.RIGHT))
+			self._render_layouts_by_index(printer, to_render)
 
-			# the ith page
-			pages[i].render(printer, Side.RIGHT, i + 1)
-
+								
 			printer.next_page()
 			printer.draw_center_rectangle()
 
-			if num_spreads != None and num_spreads % 2 == 1:
-				break
-
-			# the (i + 1)th page
-			n = i + 1
-			if n < len(pages):
-				pages[n].render(printer, Side.LEFT, n + 1)
-
-			# the (i + 1)th last page
-			n = sheets * 4 - i - 2
-			if n < len(pages):
-				pages[n].render(printer, Side.RIGHT, n + 1)
+			to_render = []
+			for l in range(0, ceil(layouts_per_page / 2)):
+				if i + l < len(folds):
+					fold = folds[i + l]
+					to_render.append((fold[1], Side.LEFT))
+					to_render.append((fold[2], Side.RIGHT))
+			self._render_layouts_by_index(printer, to_render)
 
 			printer.next_page()
 

@@ -18,6 +18,10 @@ def print_text_vertical(text, size, x, y, color):
 	print_set_color(color)
 	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
 
+def print_text_horizontal(text, size, x, y, color):
+	print_set_color(color)
+	print(f"({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT")
+
 def print_showpage():
 	print("showpage")
 
@@ -50,7 +54,7 @@ def print_preamble(paper):
 %%BeginPageSetup
 """)
 	print(f"""
-<< /PageSize [{width} {height}] /Duplex true /Tumble true >> setpagedevice
+<< /PageSize [{width} {height}] /Duplex true /Tumble {'true' if PAPER_ORIENTATION == Orientation.HORIZONTAL else 'false'} >> setpagedevice
 """)
 	print("""
 %%EndPageSetup
@@ -58,6 +62,7 @@ def print_preamble(paper):
 /LIGHT { [0.20 0.80] 0.10 setdash stroke } def
 /DARK { [0.20 0.40] 0.10 setdash stroke } def
 /SOLID { [] 0 setdash stroke } def
+/T_VERT { moveto show } def
 /T_HORIZ {
 translate
 270 rotate

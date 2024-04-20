@@ -3,39 +3,39 @@ from book import *
 # grid with r rows and c columns
 # hobonichi secret line at column s
 def make_blank_grid_with_secret(r, c, s):
-	page = Page()
+	layout = Layout()
 
 	# horizontal lines	
-	page.grid.add_horizontal_segment(0, 0, c, Stroke.DARK)
+	layout.grid.add_horizontal_segment(0, 0, c, Stroke.DARK)
 	for i in range(1, r):
-		page.grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
-	page.grid.add_horizontal_segment(r, 0, c, Stroke.DARK)
+		layout.grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
+	layout.grid.add_horizontal_segment(r, 0, c, Stroke.DARK)
 
 	# vertical lines
-	page.grid.add_vertical_segment(0, 0, r, Stroke.DARK)
+	layout.grid.add_vertical_segment(0, 0, r, Stroke.DARK)
 	for i in range(1, c):
-		page.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
-	page.grid.add_vertical_segment(s, 0, r, Stroke.DARK)
-	page.grid.add_vertical_segment(c, 0, r, Stroke.DARK)
+		layout.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
+	layout.grid.add_vertical_segment(s, 0, r, Stroke.DARK)
+	layout.grid.add_vertical_segment(c, 0, r, Stroke.DARK)
 	
-	return page
+	return layout
 
 def make_blank_grid():
-	page = Page()
+	layout = Layout()
 
 	# horizontal lines	
-	page.grid.add_horizontal_segment(0, 0, GRID_WIDTH, Stroke.DARK)
+	layout.grid.add_horizontal_segment(0, 0, GRID_WIDTH, Stroke.DARK)
 	for i in range(1, GRID_HEIGHT):
-		page.grid.add_horizontal_segment(i, 0, GRID_WIDTH, Stroke.LIGHT)
-	page.grid.add_horizontal_segment(GRID_HEIGHT, 0, GRID_WIDTH, Stroke.DARK)
+		layout.grid.add_horizontal_segment(i, 0, GRID_WIDTH, Stroke.LIGHT)
+	layout.grid.add_horizontal_segment(GRID_HEIGHT, 0, GRID_WIDTH, Stroke.DARK)
 
 	# vertical lines
-	page.grid.add_vertical_segment(0, 0, GRID_HEIGHT, Stroke.DARK)
+	layout.grid.add_vertical_segment(0, 0, GRID_HEIGHT, Stroke.DARK)
 	for i in range(1, GRID_WIDTH):
-		page.grid.add_vertical_segment(i, 0, GRID_HEIGHT, Stroke.LIGHT)
-	page.grid.add_vertical_segment(GRID_WIDTH, 0, GRID_HEIGHT, Stroke.DARK)
+		layout.grid.add_vertical_segment(i, 0, GRID_HEIGHT, Stroke.LIGHT)
+	layout.grid.add_vertical_segment(GRID_WIDTH, 0, GRID_HEIGHT, Stroke.DARK)
 	
-	return page
+	return layout
 
 def make_month_header(left, right):
 	left.grid.add_horizontal_segment(GRID_HEIGHT - 2, GRID_WIDTH - 3 * CALENDAR_DAY_WIDTH, GRID_WIDTH, Stroke.DARK)

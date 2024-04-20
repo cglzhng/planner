@@ -106,6 +106,18 @@ class Printer(object):
 				self.x_max_bottom,
 				self.y_max_bottom,
 			)
+	
+	def get_margin_x(self):
+		if self.orientation == Orientation.HORIZONTAL:
+			return self.margin_y
+		if self.orientation == Orientation.VERTICAL:
+			return self.margin_x
+	
+	def get_margin_y(self):
+		if self.orientation == Orientation.HORIZONTAL:
+			return self.margin_x
+		if self.orientation == Orientation.VERTICAL:
+			return self.margin_y
 		
 	def get_width(self):
 		x_min, y_min, x_max, y_max = self._get_min_max()
@@ -129,6 +141,10 @@ class Printer(object):
 		if (self.orientation == Orientation.HORIZONTAL):
 			if orientation == Orientation.HORIZONTAL:
 				print_text_vertical(text, size, x_min + y, y_max - x, color)
+
+		if (self.orientation == Orientation.VERTICAL):
+			if orientation == Orientation.HORIZONTAL:
+				print_text_horizontal(text, size, x_min + x, y_min + y, color)
 	
 	def draw_line(self, x1, y1, x2, y2, stroke):
 		x_min, y_min, x_max, y_max = self._get_min_max()
@@ -137,6 +153,9 @@ class Printer(object):
 
 		if (self.orientation == Orientation.HORIZONTAL):
 			print_line(x_min + y1, y_max - x1, x_min + y2, y_max - x2)
+
+		if (self.orientation == Orientation.VERTICAL):
+			print_line(x_min + x1, y_min + y1, x_min + x2, y_min + y2)
 
 		print_stroke(stroke)
 
