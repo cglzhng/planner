@@ -20,7 +20,7 @@ var msg = {
   },
   "job-attributes-tag": {
     "media": A4,
-	"sides": "two-sided-short-edge",
+	"sides": "two-sided-long-edge",
   },
   data: filedata
 };

@@ -5,24 +5,24 @@ from utils import *
 from ps import *
 
 @dataclass
+class Margins:
+	top: float
+	bottom: float
+	left: float
+	right: float
+
+@dataclass
 class Measurements:
 	top_line_count: int
 	bottom_line_count: int
 	left_line_count: int
 	right_line_count: int
 
-	# In mm
-	top_margin_top_side: float
-	bottom_margin_top_side: float
-	left_margin_top_side: float
-	right_margin_top_side: float
+	tumble_top_margins: Margins
+	tumble_bottom_margins: Margins
 
-	# In mm
-	top_margin_bottom_side: float
-	bottom_margin_bottom_side: float
-	left_margin_bottom_side: float
-	right_margin_bottom_side: float
-
+	notumble_top_margins: Margins
+	notumble_bottom_margins: Margins
 
 class Printer(object):
 	def __init__(self, paper, orientation, measurements):
@@ -41,54 +41,63 @@ class Printer(object):
 		print_end()
 	
 	def set_values(self):
-		m = self.measurements
+
+		if self.orientation == Orientation.HORIZONTAL:
+			top_margins = self.measurements.tumble_top_margins
+			bottom_margins = self.measurements.tumble_bottom_margins
+		if self.orientation == Orientation.VERTICAL:
+			top_margins = self.measurements.notumble_top_margins
+			bottom_margins = self.measurements.notumble_bottom_margins
+
 		paper = self.paper
 
-		y_min = 20 - m.bottom_line_count + 1
-		y_max = paper["height"] - (20 - m.top_line_count + 1)
-		x_min = 20 - m.left_line_count + 1
-		x_max = paper["width"] - (20 - m.right_line_count + 1)
+		y_min = 20 - self.measurements.bottom_line_count + 1
+		y_max = paper["height"] - (20 - self.measurements.top_line_count + 1)
+		x_min = 20 - self.measurements.left_line_count + 1
+		x_max = paper["width"] - (20 - self.measurements.right_line_count + 1)
 
 		self.margin_y = mm_to_point(max(
-			m.top_margin_bottom_side,
-			m.bottom_margin_bottom_side,
-			m.top_margin_top_side,
-			m.bottom_margin_top_side,
+			bottom_margins.top,
+			bottom_margins.bottom,
+			top_margins.top,
+			top_margins.bottom,
 		))
 
 		# Since the margins are different on both sides, we must have a different y_min and y_max for both sides of the paper.
 
-		d = self.margin_y - mm_to_point(m.bottom_margin_bottom_side)
+		d = self.margin_y - mm_to_point(bottom_margins.bottom)
 		self.y_min_bottom = y_min + d
 
-		d = self.margin_y - mm_to_point(m.top_margin_bottom_side)
+		d = self.margin_y - mm_to_point(bottom_margins.top)
 		self.y_max_bottom = y_max - d
 
-		d = self.margin_y - mm_to_point(m.bottom_margin_top_side)
+		d = self.margin_y - mm_to_point(top_margins.bottom)
 		self.y_min_top = y_min + d
 
-		d = self.margin_y - mm_to_point(m.top_margin_top_side)
+		d = self.margin_y - mm_to_point(top_margins.top)
 		self.y_max_top = y_max - d
 		
 		self.margin_x = mm_to_point(max(
-			m.left_margin_top_side,
-			m.right_margin_top_side,
-			m.left_margin_bottom_side,
-			m.right_margin_bottom_side,
+			top_margins.left,
+			top_margins.right,
+			bottom_margins.left,
+			bottom_margins.right,
 		))
 
 		# Since the margins are different on both sides, we must have a different x_min and x_max for both sides of the paper.
 		
-		d = self.margin_x - mm_to_point(m.left_margin_bottom_side)
+		d = self.margin_x - mm_to_point(bottom_margins.left)
 		self.x_min_bottom = x_min + d
 
-		d = self.margin_x - mm_to_point(m.right_margin_bottom_side)
+		d = self.margin_x - mm_to_point(bottom_margins.right)
 		self.x_max_bottom = x_max - d
 
-		d = self.margin_x - mm_to_point(m.left_margin_top_side)
+		d = self.margin_x - mm_to_point(top_margins.left)
 		self.x_min_top = x_min + d
+		eprint(f"x min top d {d}")
+		eprint(f"x min top {self.x_min_top}")
 
-		d = self.margin_x - mm_to_point(m.right_margin_top_side)
+		d = self.margin_x - mm_to_point(top_margins.right)
 		self.x_max_top = x_max - d
 
 	def _get_min_max(self):
@@ -161,6 +170,8 @@ class Printer(object):
 
 	def draw_center_rectangle(self):
 		x_min, y_min, x_max, y_max = self._get_min_max()
+
+		eprint(f"{x_min} {y_min} {x_max} {y_max}")
 
 		print_newpath()
 
