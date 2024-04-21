@@ -36,19 +36,26 @@ class Layout(object):
 		self.text.append(text)
 	
 	def render(self, printer, side, col, row, num=None):
-		width_full = printer.get_width()
-		height_full = printer.get_height()
+		page_width = printer.get_width()
+		page_height = printer.get_height()
 
 		width = GRID_WIDTH * UNIT
 		height = GRID_HEIGHT * UNIT
 
-		margin_x = (width_full - PAGE_COLS * width - (PAGE_COLS - 1) * GAP_COL) / 2
+		page_margin_x = printer.get_margin_x()
+		page_margin_y = printer.get_margin_y()
 
-		x = margin_x + col * (width + GAP_COL)
+		gap_col = ((page_width + 2 * page_margin_x) - PAGE_COLS * width) / PAGE_COLS
 
-		margin_y = (height_full - PAGE_ROWS * height - (PAGE_ROWS - 1) * GAP_ROW) / 2
+		margin_x = gap_col / 2 - page_margin_x 
 
-		y = margin_y + row * (height + GAP_ROW)
+		x = margin_x + col * (width + gap_col)
+
+		gap_row = ((page_height + 2 * page_margin_y) - PAGE_ROWS * height) / PAGE_ROWS
+
+		margin_y = gap_row / 2 - page_margin_y
+
+		y = margin_y + row * (height + gap_row)
 
 		self.grid.render(printer, x, y)
 
@@ -80,7 +87,7 @@ class Book:
 						self.layouts[layout_index].render(printer, layout_side, x, y, layout_index + 1)
 				i = i + 1
 	
-	def render(self, printer, max_pages=None):
+	def render(self, printer, max_pages=None, debug=False):
 		layouts_per_page = PAGE_ROWS * PAGE_COLS
 
 		layouts = self.layouts
@@ -101,25 +108,25 @@ class Book:
 			]
 			folds.append(fold)
 
-		eprint(folds)
-
 		for s in range(0, print_range):
 			i = s * (layouts_per_page // 2)
 
-			printer.draw_center_rectangle()
+			if debug:
+				printer.draw_center_rectangle()
 
 			to_render = []
 			for l in range(0, ceil(layouts_per_page / 2)):
 				if i + l < len(folds):
 					fold = folds[i + l]
-					eprint(fold)
 					to_render.append((fold[3], Side.LEFT))
 					to_render.append((fold[0], Side.RIGHT))
 			self._render_layouts_by_index(printer, to_render)
 
 								
 			printer.next_page()
-			printer.draw_center_rectangle()
+
+			if debug:
+				printer.draw_center_rectangle()
 
 			to_render = []
 			for l in range(0, ceil(layouts_per_page / 2)):

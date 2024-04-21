@@ -13,30 +13,6 @@ TOP_LINE_COUNT = 7
 LEFT_LINE_COUNT = 7
 RIGHT_LINE_COUNT = 8
 
-TUMBLE_TOP_MARGIN_BOTTOM_SIDE = 4.7
-TUMBLE_BOTTOM_MARGIN_BOTTOM_SIDE = 4
-
-TUMBLE_TOP_MARGIN_TOP_SIDE = 4.5 
-TUMBLE_BOTTOM_MARGIN_TOP_SIDE = 3.8
-
-TUMBLE_LEFT_MARGIN_BOTTOM_SIDE = 4
-TUMBLE_RIGHT_MARGIN_BOTTOM_SIDE = 4.8
-
-TUMBLE_LEFT_MARGIN_TOP_SIDE = 7
-TUMBLE_RIGHT_MARGIN_TOP_SIDE = 1.1
-
-NOTUMBLE_LEFT_MARGIN_BOTTOM_SIDE = 5.5
-NOTUMBLE_RIGHT_MARGIN_BOTTOM_SIDE = 3.5
-
-NOTUMBLE_LEFT_MARGIN_TOP_SIDE = 6.5
-NOTUMBLE_RIGHT_MARGIN_TOP_SIDE = 1.5
-
-NOTUMBLE_TOP_MARGIN_BOTTOM_SIDE = 4.1
-NOTUMBLE_BOTTOM_MARGIN_BOTTOM_SIDE = 4.1
-
-NOTUMBLE_TOP_MARGIN_TOP_SIDE = 4.8
-NOTUMBLE_BOTTOM_MARGIN_TOP_SIDE = 3.3
-
 TUMBLE_TOP_MARGINS = Margins(
 	top=4.5,
 	bottom=3.8,
@@ -81,19 +57,16 @@ measurements = Measurements(
 p = Printer(PAPER, PAPER_ORIENTATION, measurements)
 p.start()
 
-
-p.debug_center_rectangle_duplex()
-
-"""
-
-layout = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
+layout = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 
 book = Book()
 
-for i in range(0, 11):
+for i in range(0, 48):
  	book.add_layout(layout)
 
 book.render(p)
+
+"""
 
 page1, page2 = make_month(31, Weekday.SATURDAY)
 book.add_page(page)
