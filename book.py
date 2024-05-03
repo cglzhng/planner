@@ -20,9 +20,12 @@ class Text(object):
 		length = len(self.text) * self.size["size"] * self.size["width_ratio"]
 		t_x = (width * UNIT - length) / 2
 		t_y = (height * UNIT - self.size["size"] * self.size["height_ratio"]) / 2
-		self.x = x * UNIT + t_x
-		self.y = y * UNIT + t_y
-		
+		if self.orientation == Orientation.HORIZONTAL:
+			self.x = x * UNIT + t_x
+			self.y = y * UNIT + t_y
+		else:
+			self.x = x * UNIT + t_y
+			self.y = y * UNIT + t_x
 	
 	def render(self, printer, rx, ry):
 		printer.draw_text(self.text, rx + self.x, ry + self.y, self.size["size"], self.color, self.orientation)
@@ -45,15 +48,25 @@ class Layout(object):
 		page_margin_x = printer.get_margin_x()
 		page_margin_y = printer.get_margin_y()
 
-		gap_col = ((page_width + 2 * page_margin_x) - PAGE_COLS * width) / PAGE_COLS
+		if GAP_COL == 0:
+			gap_col = ((page_width + 2 * page_margin_x) - PAGE_COLS * width) / PAGE_COLS
+			margin_col = gap_col / 2
+		else:
+			gap_col = GAP_COL
+			margin_col = (page_width + 2 * page_margin_x - PAGE_COLS * width - (PAGE_COLS - 1) * GAP_COL) / 2
 
-		margin_x = gap_col / 2 - page_margin_x 
+		margin_x = margin_col - page_margin_x 
 
 		x = margin_x + col * (width + gap_col)
 
-		gap_row = ((page_height + 2 * page_margin_y) - PAGE_ROWS * height) / PAGE_ROWS
+		if GAP_ROW == 0:
+			gap_row = ((page_height + 2 * page_margin_y) - PAGE_ROWS * height) / PAGE_ROWS
+			margin_row = gap_row / 2
+		else:
+			gap_row = GAP_ROW
+			margin_row = (page_height + 2 * page_margin_y - PAGE_ROWS * height - (PAGE_ROWS - 1) * GAP_ROW) / 2
 
-		margin_y = gap_row / 2 - page_margin_y
+		margin_y = margin_row - page_margin_y
 
 		y = margin_y + row * (height + gap_row)
 
@@ -84,8 +97,24 @@ class Book:
 				if i < len(layout_params):
 					layout_index, layout_side = layout_params[i]
 					if layout_index < len(self.layouts):
-						self.layouts[layout_index].render(printer, layout_side, x, y, layout_index + 1)
+						self.layouts[layout_index].render(printer, layout_side, x, PAGE_ROWS - y - 1, layout_index + 1)
 				i = i + 1
+	
+	def render_display(self, printer, debug=False):
+		layouts_per_page = PAGE_ROWS * PAGE_COLS
+		num_pages = ceil(len(self.layouts) / layouts_per_page)
+
+		for i in range(0, num_pages):
+			if debug:
+				printer.draw_center_rectangle()
+
+			to_render = []
+			for j in range(0, layouts_per_page):
+				to_render.append((i * layouts_per_page + j, Side.LEFT if j % 2 == 0 else Side.RIGHT))
+			self._render_layouts_by_index(printer, to_render)
+			eprint(to_render)
+			printer.next_page()
+
 	
 	def render(self, printer, max_pages=None, debug=False):
 		layouts_per_page = PAGE_ROWS * PAGE_COLS

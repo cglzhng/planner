@@ -35,6 +35,9 @@ def print_preamble(paper):
 	height = paper["height"]
 	width = paper["width"]
 
+	light_stroke = STROKES[UNIT][Stroke.LIGHT.value]
+	dark_stroke = STROKES[UNIT][Stroke.DARK.value]
+
 	print("""
 %!PS-Adobe-3.0
 """)
@@ -59,8 +62,6 @@ def print_preamble(paper):
 	print("""
 %%EndPageSetup
 /LINE { newpath moveto lineto } def
-/LIGHT { [0.20 0.80] 0.10 setdash stroke } def
-/DARK { [0.20 0.40] 0.10 setdash stroke } def
 /SOLID { [] 0 setdash stroke } def
 /T_VERT { moveto show } def
 /T_HORIZ {
@@ -71,6 +72,10 @@ show
 90 rotate
 translate
 } def
+""")
+	print(f"""
+/LIGHT {{ {light_stroke} setdash stroke }} def
+/DARK {{ {dark_stroke} setdash stroke }} def
 """)
 	print_font()
 

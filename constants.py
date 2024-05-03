@@ -26,10 +26,22 @@ PAPERS = {
 
 
 class Stroke(Enum):
-	BLANK = 1
-	LIGHT = 2
-	DARK = 3
-	SOLID = 4
+	BLANK = "blank"
+	LIGHT = "light"
+	DARK = "dark"
+	SOLID = "solid"
+
+STROKES = {}
+
+STROKES[12] = {
+	"light": "[0.20 0.80] 0.10",
+	"dark": "[0.20 0.40] 0.10",
+}
+
+STROKES[10.5] = {
+	"light": "[0.20 0.80] 0.10",
+	"dark": "[0.20 0.40] 0.10",
+}
 
 class Orientation(Enum):
 	HORIZONTAL = 1
@@ -62,12 +74,16 @@ class Weekday(Enum):
 	SATURDAY = 6 
 	SUNDAY = 7
 
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
 FONTS = {
 	"Iosevka": {
 		"Tiny": {
 			"size": 7,
 			"width_ratio": 1 / 2,
-			"height_ratio": 6 / 7,
+			"height_ratio": 5 / 7,
 		},
 		"Small": {
 			"size": 9,
@@ -95,15 +111,21 @@ match BOOK_SIZE:
 		GAP_COL = 28
 		CALENDAR_DAY_WIDTH = 8
 		CALENDAR_DAY_HEIGHT = 7
+		CALENDAR_HEADER_HEIGHT = 2
+		CALENDAR_HEADER_TEXT = FONT["Small"]
 	case PaperSize.A6:
 		PAPER = PAPERS["A4"]
 		PAPER_ORIENTATION = Orientation.VERTICAL
-		UNIT = 12
-		GRID_WIDTH = 20
-		GRID_HEIGHT = 32
+		UNIT = 10.5
+		GRID_WIDTH = 24
+		GRID_HEIGHT = 36
 		PAGE_ROWS = 2
 		PAGE_COLS = 2
-		GAP_ROW = 28
-		GAP_COL = 28
-		CALENDAR_DAY_WIDTH = 5
-		CALENDAR_DAY_HEIGHT = 5
+		GAP_ROW = 0
+		GAP_COL = 0
+		CALENDAR_DAY_WIDTH = 6
+		CALENDAR_DAY_HEIGHT = 6
+		CALENDAR_HEADER_HEIGHT = 2
+		CALENDAR_HEADER_TEXT = FONT["Small"]
+		WEEK_DAY_HEIGHT = 9
+		WEEK_DAY_WIDTH = 24

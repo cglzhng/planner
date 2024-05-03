@@ -266,10 +266,29 @@ class Grid(object):
 		self.vertical = [[] for i in range(0, GRID_WIDTH + 1)]
 
 	def add_horizontal_segment(self, row, start, end, stroke):
+		if row >= len(self.horizontal) or row < 0 or end < start:
+			return
+		if end >= len(self.vertical):
+			end = len(self.vertical) - 1
+		if start < 0:
+			start = 0
 		insert_segment(self.horizontal[row], Segment(stroke, start, end))
 
 	def add_vertical_segment(self, column, start, end, stroke):
+		if column >= len(self.vertical) or column < 0 or end < start:
+			return
+		if end >= len(self.horizontal):
+			end = len(self.horizontal) - 1
+		if start < 0:
+			start = 0
 		insert_segment(self.vertical[column], Segment(stroke, start, end))
+	
+	def add_blank_rectangle(self, x, y, width, height, stroke):
+		self.add_rectangle(x, y, width, height, stroke)
+		for i in range(1, width):
+			self.add_vertical_segment(x + i, y, y + height, Stroke.BLANK)
+		for i in range(1, height):
+			self.add_horizontal_segment(y + i, x, x + width, Stroke.BLANK)
 
 	def add_rectangle(self, x, y, width, height, stroke):
 		self.add_horizontal_segment(y, x, x + width, stroke)

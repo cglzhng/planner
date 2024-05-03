@@ -150,10 +150,14 @@ class Printer(object):
 		if (self.orientation == Orientation.HORIZONTAL):
 			if orientation == Orientation.HORIZONTAL:
 				print_text_vertical(text, size, x_min + y, y_max - x, color)
+			if orientation == Orientation.VERTICAL:
+				print_text_horizontal(text, size, x_min + y, y_max - x, color)
 
 		if (self.orientation == Orientation.VERTICAL):
 			if orientation == Orientation.HORIZONTAL:
 				print_text_horizontal(text, size, x_min + x, y_min + y, color)
+			if orientation == Orientation.VERTICAL:
+				print_text_vertical(text, size, x_min + x, y_min + y, color)
 	
 	def draw_line(self, x1, y1, x2, y2, stroke):
 		x_min, y_min, x_max, y_max = self._get_min_max()
