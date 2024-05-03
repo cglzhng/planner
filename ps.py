@@ -8,6 +8,8 @@ def print_stroke(stroke):
 		print("LIGHT")
 	if stroke == Stroke.DARK:
 		print("DARK")
+	if stroke == Stroke.DARKER:
+		print("DARKER")
 	if stroke == Stroke.SOLID:
 		print("SOLID")
 
@@ -37,6 +39,7 @@ def print_preamble(paper):
 
 	light_stroke = STROKES[UNIT][Stroke.LIGHT.value]
 	dark_stroke = STROKES[UNIT][Stroke.DARK.value]
+	darker_stroke = STROKES[UNIT][Stroke.DARKER.value]
 
 	print("""
 %!PS-Adobe-3.0
@@ -76,6 +79,7 @@ translate
 	print(f"""
 /LIGHT {{ {light_stroke} setdash stroke }} def
 /DARK {{ {dark_stroke} setdash stroke }} def
+/DARKER {{ {darker_stroke} setdash stroke }} def
 """)
 	print_font()
 

@@ -59,10 +59,10 @@ p.start()
 
 book = Book()
 
-layout = make_test_grid(0, 5, Stroke.LIGHT)
+"""
+layout = make_test_grid_with_secret(0, 5, Stroke.LIGHT)
 layout.render(p, Side.TOP, 0, 0)
 
-"""
 
 layout = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 
@@ -71,17 +71,18 @@ for i in range(0, 48):
  	book.add_layout(layout)
 
 
+"""
 
+plain = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 layout1, layout2 = make_month(31, Weekday.SATURDAY)
 week1, week2 = make_weekly_layout(9, 18, 6)
+book.add_layout(plain)
 book.add_layout(layout1)
 book.add_layout(layout2)
-book.add_layout(week1)
-book.add_layout(week2)
+book.add_layout(plain)
 
-book.render_display(p, debug=True)
+book.render(p, debug=False)
 
-"""
 
 
 p.end()

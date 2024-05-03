@@ -29,6 +29,7 @@ class Stroke(Enum):
 	BLANK = "blank"
 	LIGHT = "light"
 	DARK = "dark"
+	DARKER = "darker"
 	SOLID = "solid"
 
 STROKES = {}
@@ -39,8 +40,9 @@ STROKES[12] = {
 }
 
 STROKES[10.5] = {
-	"light": "[0.20 0.80] 0.10",
-	"dark": "[0.20 0.40] 0.10",
+	"light": "[0.20 0.85] 0.10",
+	"dark": "[0.30 0.45] 0.15",
+	"darker": "[0.20 0.10] 0.10",
 }
 
 class Orientation(Enum):
