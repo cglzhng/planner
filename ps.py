@@ -18,11 +18,15 @@ def print_line(x1, y1, x2, y2):
 
 def print_text_vertical(text, size, x, y, color):
 	print_set_color(color)
-	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
+	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT")
+
+def print_text_vertical_reverse(text, size, x, y, color):
+	print_set_color(color)
+	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT_REVERSE")
 
 def print_text_horizontal(text, size, x, y, color):
 	print_set_color(color)
-	print(f"({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT")
+	print(f"({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
 
 def print_showpage():
 	print("showpage")
@@ -66,13 +70,21 @@ def print_preamble(paper):
 %%EndPageSetup
 /LINE { newpath moveto lineto } def
 /SOLID { [] 0 setdash stroke } def
-/T_VERT { moveto show } def
-/T_HORIZ {
+/T_HORIZ { moveto show } def
+/T_VERT {
 translate
 270 rotate
 0 0 moveto
 show
 90 rotate
+translate
+} def
+/T_VERT_REVERSE {
+translate
+90 rotate
+0 0 moveto
+show
+270 rotate
 translate
 } def
 """)

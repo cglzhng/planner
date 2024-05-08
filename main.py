@@ -74,14 +74,16 @@ for i in range(0, 48):
 """
 
 plain = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
-layout1, layout2 = make_month(31, Weekday.SATURDAY)
+month1, month2 = make_month(2, 31, 5, 5)
+plan1, plan2 = make_month_plan(2, 31, 5)
 week1, week2 = make_weekly_layout(9, 18, 6)
-book.add_layout(plain)
-book.add_layout(layout1)
-book.add_layout(layout2)
-book.add_layout(plain)
+book.add_layout(month1)
+book.add_layout(month2)
+book.add_layout(plan1)
+book.add_layout(plan2)
 
-book.render(p, debug=False)
+
+book.render_display(p, debug=False)
 
 
 

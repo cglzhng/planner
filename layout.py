@@ -62,9 +62,14 @@ def make_blank_grid():
 	
 	return layout
 
-def make_month_header(left, right):
+def make_month_header(month, left, right):
 	width = CALENDAR_DAY_WIDTH
 	height = CALENDAR_HEADER_HEIGHT
+
+	left.grid.add_blank_rectangle(0, GRID_HEIGHT - height * 2, width, height * 2, Stroke.DARKER)
+	t = Text(MONTHS[month], FONT["Big"], LIGHT_PURPLE)
+	t.center_in(0, GRID_HEIGHT - height * 2, width, height * 2)
+	left.add_text(t)
 
 	for i in range(0, 3):
 		x = GRID_WIDTH - 3 * width 
@@ -73,7 +78,6 @@ def make_month_header(left, right):
 		t.center_in(x + i * width, GRID_HEIGHT - height, width, height)
 		left.add_text(t)
 	
-	days = ["Thursday", "Friday", "Saturday", "Sunday"]
 	for i in range(0, 4):
 		right.grid.add_blank_rectangle(i * width, GRID_HEIGHT - height, width, height, Stroke.DARKER)
 		t = Text(WEEKDAYS[i + 3], CALENDAR_HEADER_TEXT, LIGHT_PURPLE)
@@ -81,17 +85,28 @@ def make_month_header(left, right):
 		right.add_text(t)
 
 
-def make_month(num_days, start_day):
+def make_month(month, num_days, start_day, start_week=None):
 	left = make_blank_grid()
 	right = make_blank_grid()
-
-	make_month_header(left, right)
 
 	start_y = GRID_HEIGHT - CALENDAR_HEADER_HEIGHT - CALENDAR_DAY_HEIGHT
 	left_start_x = GRID_WIDTH - 3 * CALENDAR_DAY_WIDTH
 
+	if start_day > 0:
+		for i in range(0, start_day):
+			if i < 3:
+				x = left_start_x + CALENDAR_DAY_WIDTH * i 
+				side = left
+			else:
+				x = CALENDAR_DAY_WIDTH * (i - 3)
+				side = right
+
+			side.grid.add_rectangle(x, start_y, CALENDAR_DAY_WIDTH, CALENDAR_DAY_HEIGHT, Stroke.DARK)
+
+	make_month_header(month, left, right)
+
 	week = 0
-	weekday = start_day.value - 1
+	weekday = start_day
 	day = 0
 
 	while day < num_days:
@@ -115,6 +130,11 @@ def make_month(num_days, start_day):
 		num.center_in(x, y + height - 1, 2, 1)
 		side.add_text(num)
 
+		if weekday == 0 and start_week is not None:
+			week_num = Text(f"W{week + start_week}", FONT["Tinier"], LIGHT_PURPLE)
+			week_num.center_in(left_start_x - 1, y, 1, 1)
+			left.add_text(week_num)
+
 		day = day + 1
 
 		weekday = weekday + 1
@@ -122,6 +142,28 @@ def make_month(num_days, start_day):
 			weekday = 0
 			week = week + 1
 	
+	return left, right
+
+def make_month_plan(month, num_days, start_day):
+	left = make_blank_grid()
+	right = make_blank_grid()
+
+	weekday = start_day
+	for day in range(1, num_days + 1):
+		num = Text(str(day), FONT["Tiny"], LIGHT_PURPLE)
+		num.center_in(0, GRID_HEIGHT - day, 1, 1)
+		right.add_text(num)
+		name = Text(WEEKDAYS[weekday][0], FONT["Tiny"], LIGHT_PURPLE)
+		name.center_in(1, GRID_HEIGHT - day, 1, 1)
+		right.add_text(name)
+		weekday = weekday + 1
+		if weekday == 7:
+			weekday = 0
+	
+	right.grid.add_vertical_segment(1, GRID_HEIGHT - num_days, GRID_HEIGHT, Stroke.DARK)
+	right.grid.add_vertical_segment(2, GRID_HEIGHT - num_days, GRID_HEIGHT, Stroke.DARK)
+	right.grid.add_vertical_segment(GRID_WIDTH // 2, 0, GRID_HEIGHT, Stroke.DARK)
+	right.grid.add_horizontal_segment(GRID_HEIGHT - num_days, 0, GRID_WIDTH // 2, Stroke.DARK)
 
 	return left, right
 	
@@ -132,12 +174,12 @@ def make_weekly_layout(month, week, start_day):
 	header_height = 2
 	num_width = 2
 	name_width = 5
-	month_width = 5
+	month_width = 6
 	week_width = 4
 
 	left.grid.add_blank_rectangle(0, GRID_HEIGHT - header_height, month_width, header_height, Stroke.DARKER)
 	left.grid.add_blank_rectangle(month_width, GRID_HEIGHT - header_height, week_width, header_height, Stroke.DARKER)
-	month = Text(MONTHS[month], FONT["Small"], LIGHT_PURPLE)
+	month = Text(MONTHS[month], FONT["Big"], LIGHT_PURPLE)
 	month.center_in(0, GRID_HEIGHT - header_height, month_width, header_height)
 	left.add_text(month)
 	week = Text(f"Week {week + 1}", FONT["Small"], LIGHT_PURPLE)
@@ -158,14 +200,13 @@ def make_weekly_layout(month, week, start_day):
 
 		side.grid.add_rectangle(0, y_bottom, WEEK_DAY_WIDTH, WEEK_DAY_HEIGHT, Stroke.DARKER)
 		side.grid.add_blank_rectangle(0, y_top - header_height, num_width, header_height, Stroke.DARKER)
-		num = Text(str(start_day + i), FONT["Small"], LIGHT_PURPLE)
+		num = Text(str(start_day + i), FONT["Big"], LIGHT_PURPLE)
 		num.center_in(0, y_top - header_height, num_width, header_height)
 		side.add_text(num)
 
-		side.grid.add_blank_rectangle(0, y_bottom, num_width, y_top - y_bottom - header_height, Stroke.DARKER)
-		name = Text(WEEKDAYS[i], FONT["Small"], LIGHT_PURPLE, Orientation.VERTICAL)
-		name.center_in(0, y_bottom, y_top - y_bottom - header_height, num_width)
-		eprint(y_top)
+		side.grid.add_blank_rectangle(0, y_top - header_height - name_width, num_width, name_width, Stroke.DARKER)
+		name = Text(WEEKDAYS[i], FONT["Small"], LIGHT_PURPLE, Orientation.VERTICAL, reverse=True)
+		name.center_in(0, y_top - header_height - name_width, num_width, name_width)
 		side.add_text(name)
 	
 		

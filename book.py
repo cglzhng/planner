@@ -4,10 +4,11 @@ from utils import *
 from grid import *
 
 class Text(object):
-	def __init__(self, text, size, color=BLACK, orientation=Orientation.HORIZONTAL):
+	def __init__(self, text, size, color=BLACK, orientation=Orientation.HORIZONTAL, reverse=False):
 		self.text = text
 		self.size = size
 		self.orientation = orientation
+		self.reverse = reverse
 		self.color = color
 		self.x = 0
 		self.y = 0
@@ -17,18 +18,32 @@ class Text(object):
 		self.y = y
 	
 	def center_in(self, x, y, width, height):
-		length = len(self.text) * self.size["size"] * self.size["width_ratio"]
-		t_x = (width * UNIT - length) / 2
-		t_y = (height * UNIT - self.size["size"] * self.size["height_ratio"]) / 2
+		text_length = len(self.text) * self.size["size"] * self.size["width_ratio"]
+		text_height = self.size["size"] * self.size["height_ratio"]
+
 		if self.orientation == Orientation.HORIZONTAL:
-			self.x = x * UNIT + t_x
-			self.y = y * UNIT + t_y
+			r_width = width * UNIT
+			r_height = height * UNIT
+			r_x = x * UNIT
+			r_y = y * UNIT
 		else:
-			self.x = x * UNIT + t_y
-			self.y = y * UNIT + t_x
+			r_width = height * UNIT
+			r_height = width * UNIT
+			r_x = (x + width) * UNIT
+			r_y = y * UNIT
+
+		t_x = (r_width - text_length) / 2
+		t_y = (r_height - text_height) / 2
+		
+		if self.orientation == Orientation.HORIZONTAL:
+			self.x = r_x + t_x
+			self.y = r_y + t_y
+		if self.orientation == Orientation.VERTICAL:
+			self.x = r_x - t_y
+			self.y = r_y + t_x
 	
 	def render(self, printer, rx, ry):
-		printer.draw_text(self.text, rx + self.x, ry + self.y, self.size["size"], self.color, self.orientation)
+		printer.draw_text(self.text, rx + self.x, ry + self.y, self.size["size"], self.color, self.orientation, self.reverse)
 
 class Layout(object):
 	def __init__(self):

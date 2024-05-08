@@ -67,21 +67,17 @@ LIGHT_PURPLE = Color(0.40, 0.40, 0, 0)
 
 SMALL_TEXT_SIZE = 7
 
-class Weekday(Enum):
-	MONDAY = 1
-	TUESDAY = 2
-	WEDNESDAY = 3
-	THURSDAY = 4
-	FRIDAY = 5
-	SATURDAY = 6 
-	SUNDAY = 7
-
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 FONTS = {
 	"Iosevka": {
+		"Tinier": {
+			"size": 6,
+			"width_ratio": 1 / 2,
+			"height_ratio": 5 / 7,
+		},
 		"Tiny": {
 			"size": 7,
 			"width_ratio": 1 / 2,
@@ -89,6 +85,11 @@ FONTS = {
 		},
 		"Small": {
 			"size": 9,
+			"width_ratio": 1 / 2,
+			"height_ratio": 5 / 7,
+		},
+		"Big": {
+			"size": 14,
 			"width_ratio": 1 / 2,
 			"height_ratio": 5 / 7,
 		},
@@ -127,7 +128,7 @@ match BOOK_SIZE:
 		GAP_COL = 0
 		CALENDAR_DAY_WIDTH = 6
 		CALENDAR_DAY_HEIGHT = 6
-		CALENDAR_HEADER_HEIGHT = 2
+		CALENDAR_HEADER_HEIGHT = 1
 		CALENDAR_HEADER_TEXT = FONT["Small"]
 		WEEK_DAY_HEIGHT = 9
 		WEEK_DAY_WIDTH = 24

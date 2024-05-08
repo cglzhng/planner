@@ -144,7 +144,7 @@ class Printer(object):
 		if self.orientation == Orientation.VERTICAL:
 			return y_max - y_min
 	
-	def draw_text(self, text, x, y, size=12, color=BLACK, orientation=Orientation.HORIZONTAL):
+	def draw_text(self, text, x, y, size=12, color=BLACK, orientation=Orientation.HORIZONTAL, reverse=False):
 		x_min, y_min, x_max, y_max = self._get_min_max()
 
 		if (self.orientation == Orientation.HORIZONTAL):
@@ -157,7 +157,11 @@ class Printer(object):
 			if orientation == Orientation.HORIZONTAL:
 				print_text_horizontal(text, size, x_min + x, y_min + y, color)
 			if orientation == Orientation.VERTICAL:
-				print_text_vertical(text, size, x_min + x, y_min + y, color)
+				if (reverse):
+					print_text_vertical_reverse(text, size, x_min + x, y_min + y, color)
+				else:
+					print_text_vertical(text, size, x_min + x, y_min + y, color)
+				
 	
 	def draw_line(self, x1, y1, x2, y2, stroke):
 		x_min, y_min, x_max, y_max = self._get_min_max()
