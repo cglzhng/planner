@@ -1,214 +1,166 @@
-from book import *
+from dataclasses import dataclass
 
-def make_test_lines_horizontal(start, num, stroke):
-	layout = Layout()
-	for i in range(0, num):
-		layout.grid.add_horizontal_segment(start + i, 0, GRID_WIDTH, stroke)
-	return layout
+from constants import *
+from grid import *
 
-def make_test_grid_with_secret(start, num, stroke):
-	layout = Layout()
+@dataclass
+class Box(object):
+	x: int
+	y: int
+	width: int
+	height: int
+	stroke: Stroke = None
+	blank: bool = False
 
-	# horizontal lines	
-	layout.grid.add_horizontal_segment(start, 0, GRID_WIDTH, Stroke.DARK)
-	for i in range(1, num):
-		layout.grid.add_horizontal_segment(start + i, 0, GRID_WIDTH, Stroke.LIGHT)
-	layout.grid.add_horizontal_segment(start + num, 0, GRID_WIDTH, Stroke.DARK)
+	def add_to_layout(self, layout):
+		if self.width == 0 and self.height == 0:
+			return
 
-	# vertical lines
-	layout.grid.add_vertical_segment(0, start, start + num, Stroke.DARK)
-	for i in range(1, GRID_WIDTH):
-		layout.grid.add_vertical_segment(i, start, start + num, Stroke.LIGHT)
-	layout.grid.add_vertical_segment(5, start, start + num, Stroke.DARK)
-	layout.grid.add_vertical_segment(GRID_WIDTH, start, start + num, Stroke.DARK)
+		if self.width == 0 and self.stroke is not None:
+			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke)
+			return
+
+		if self.height == 0 and self.stroke is not None:
+			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke)
+			
+		if self.blank:
+			for i in range(1, self.width):
+				layout.grid.add_vertical_segment(self.x + i, self.y, self.y + self.height, Stroke.BLANK)
+			for i in range(1, self.height):
+				layout.grid.add_horizontal_segment(self.y + i, self.x, self.x + self.width, Stroke.BLANK)
+
+		if self.stroke is not None:
+			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke)
+			layout.grid.add_horizontal_segment(self.y + self.height, self.x, self.x + self.width, self.stroke)
+			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke)
+			layout.grid.add_vertical_segment(self.x + self.width, self.y, self.y + self.height, self.stroke)
+
+@dataclass
+class Text(object):
+	string: str
+	size: dict 
+	color: Color = BLACK
+	align: Side = Side.LEFT
+	orientation: Orientation = Orientation.HORIZONTAL
+	reverse: bool = False
+
+@dataclass
+class TextBox(object):
+	box: Box
+	text: Text
+	align_h: Align = Align.CENTER
+	align_v: Align = Align.CENTER
+	padding_left: float = 0.0
+	padding_right: float = 0.0
+	padding_top: float = 0.0
+	padding_bottom: float = 0.0
+
+	def add_to_layout(self, layout):
+		text = self.text
+		box = self.box
+
+		box.add_to_layout(layout)
+
+		length = len(text.string) * text.size["size"] * text.size["width_ratio"]
+		girth = text.size["size"] * text.size["height_ratio"]
+
+		if text.orientation == Orientation.HORIZONTAL:
+			text_width = length
+			text_height = girth
+		if text.orientation == Orientation.VERTICAL:
+			text_width = girth
+			text_height = length
+
+		box_x = box.x * UNIT
+		box_y = box.y * UNIT
+		box_width = box.width * UNIT
+		box_height = box.height * UNIT
+
+		if self.align_h == Align.CENTER:
+			t_x = (box_width - text_width) / 2
+			x = box_x + t_x
+		if self.align_h == Align.START:
+			x = box_x + self.padding_left
+		if self.align_h == Align.END:
+			x = box_x + box_width - text_width - self.padding_right
+
+		if self.align_v == Align.CENTER:
+			t_y = (box_height - text_height) / 2
+			y = box_y + t_y
+		if self.align_v == Align.START:
+			y = box_y + box_height - text_height - self.padding_top
+		if self.align_v == Align.END:
+			y = box_y + self.padding_bottom
+
+		layout.text.append(LayoutText(text, x, y))
+
+@dataclass
+class LayoutText(object):
+	text: Text
+	x: float
+	y: float
+
+class Layout(object):
+	def __init__(self, force_no_num=False):
+		self.grid = Grid()
+		self.text = []
+		self.force_no_num = force_no_num
 	
-	return layout
+	def add_shape(self, shape):
+		shape.add_to_layout(self)
 
-
-# grid with r rows and c columns
-# hobonichi secret line at column s
-def make_blank_grid_with_secret(r, c, s):
-	layout = Layout()
-
-	# horizontal lines	
-	layout.grid.add_horizontal_segment(0, 0, c, Stroke.DARK)
-	for i in range(1, r):
-		layout.grid.add_horizontal_segment(i, 0, c, Stroke.LIGHT)
-	layout.grid.add_horizontal_segment(r, 0, c, Stroke.DARK)
-
-	# vertical lines
-	layout.grid.add_vertical_segment(0, 0, r, Stroke.DARK)
-	for i in range(1, c):
-		layout.grid.add_vertical_segment(i, 0, r, Stroke.LIGHT)
-	layout.grid.add_vertical_segment(s, 0, r, Stroke.DARK)
-	layout.grid.add_vertical_segment(c, 0, r, Stroke.DARK)
+	def add_shapes(self, shapes):
+		for shape in shapes:
+			shape.add_to_layout(self)
 	
-	return layout
+	def _render_text(self, printer, layout_text, rx, ry):
+		text = layout_text.text
+		printer.draw_text(text.string, rx + layout_text.x, ry + layout_text.y, text.size["size"], text.color, text.orientation, text.reverse)
 
-def make_blank_grid():
-	layout = Layout()
-
-	# horizontal lines	
-	layout.grid.add_horizontal_segment(0, 0, GRID_WIDTH, Stroke.DARK)
-	for i in range(1, GRID_HEIGHT):
-		layout.grid.add_horizontal_segment(i, 0, GRID_WIDTH, Stroke.LIGHT)
-	layout.grid.add_horizontal_segment(GRID_HEIGHT, 0, GRID_WIDTH, Stroke.DARK)
-
-	# vertical lines
-	layout.grid.add_vertical_segment(0, 0, GRID_HEIGHT, Stroke.DARK)
-	for i in range(1, GRID_WIDTH):
-		layout.grid.add_vertical_segment(i, 0, GRID_HEIGHT, Stroke.LIGHT)
-	layout.grid.add_vertical_segment(GRID_WIDTH, 0, GRID_HEIGHT, Stroke.DARK)
 	
-	return layout
+	def render(self, printer, side, col, row, num=None):
+		if not self.force_no_num and num is not None:
+			t = Text(str(num), FONT["Tiny"], LIGHT_PURPLE)
+			if side == Side.LEFT:
+				box = Box(0, 0, 1, 1)
+			if side == Side.RIGHT:
+				box = Box(GRID_WIDTH - 1, 0, 1, 1)
+			TextBox(box, t).add_to_layout(self)
 
-def make_month_header(month, left, right):
-	width = CALENDAR_DAY_WIDTH
-	height = CALENDAR_HEADER_HEIGHT
+		page_width = printer.get_width()
+		page_height = printer.get_height()
 
-	left.grid.add_blank_rectangle(0, GRID_HEIGHT - height * 2, width, height * 2, Stroke.DARKER)
-	t = Text(MONTHS[month], FONT["Big"], LIGHT_PURPLE)
-	t.center_in(0, GRID_HEIGHT - height * 2, width, height * 2)
-	left.add_text(t)
+		width = GRID_WIDTH * UNIT
+		height = GRID_HEIGHT * UNIT
 
-	for i in range(0, 3):
-		x = GRID_WIDTH - 3 * width 
-		left.grid.add_blank_rectangle(x + i * width, GRID_HEIGHT - height, width, height, Stroke.DARKER)
-		t = Text(WEEKDAYS[i], CALENDAR_HEADER_TEXT, LIGHT_PURPLE)
-		t.center_in(x + i * width, GRID_HEIGHT - height, width, height)
-		left.add_text(t)
-	
-	for i in range(0, 4):
-		right.grid.add_blank_rectangle(i * width, GRID_HEIGHT - height, width, height, Stroke.DARKER)
-		t = Text(WEEKDAYS[i + 3], CALENDAR_HEADER_TEXT, LIGHT_PURPLE)
-		t.center_in(i * width, GRID_HEIGHT - height, width, height)
-		right.add_text(t)
+		page_margin_x = printer.get_margin_x()
+		page_margin_y = printer.get_margin_y()
 
-
-def make_month(month, num_days, start_day, start_week=None):
-	left = make_blank_grid()
-	right = make_blank_grid()
-
-	start_y = GRID_HEIGHT - CALENDAR_HEADER_HEIGHT - CALENDAR_DAY_HEIGHT
-	left_start_x = GRID_WIDTH - 3 * CALENDAR_DAY_WIDTH
-
-	if start_day > 0:
-		for i in range(0, start_day):
-			if i < 3:
-				x = left_start_x + CALENDAR_DAY_WIDTH * i 
-				side = left
-			else:
-				x = CALENDAR_DAY_WIDTH * (i - 3)
-				side = right
-
-			side.grid.add_rectangle(x, start_y, CALENDAR_DAY_WIDTH, CALENDAR_DAY_HEIGHT, Stroke.DARK)
-
-	make_month_header(month, left, right)
-
-	week = 0
-	weekday = start_day
-	day = 0
-
-	while day < num_days:
-		height = CALENDAR_DAY_HEIGHT
-		y = start_y - week * CALENDAR_DAY_HEIGHT
-		if y < 0:
-			y = 0
-			height = GRID_HEIGHT - CALENDAR_HEADER_HEIGHT - week * CALENDAR_DAY_HEIGHT
-
-		
-		if weekday < 3:
-			x = left_start_x + CALENDAR_DAY_WIDTH * weekday
-			side = left
+		if GAP_COL == 0:
+			gap_col = ((page_width + 2 * page_margin_x) - PAGE_COLS * width) / PAGE_COLS
+			margin_col = gap_col / 2
 		else:
-			x = CALENDAR_DAY_WIDTH * (weekday - 3)
-			side = right
+			gap_col = GAP_COL
+			margin_col = (page_width + 2 * page_margin_x - PAGE_COLS * width - (PAGE_COLS - 1) * GAP_COL) / 2
 
-		side.grid.add_rectangle(x, y, CALENDAR_DAY_WIDTH, height, Stroke.DARKER)
-		side.grid.add_blank_rectangle(x, y + height - 1, 2, 1, Stroke.DARKER)
-		num = Text(str(day + 1), FONT["Tiny"], LIGHT_PURPLE)
-		num.center_in(x, y + height - 1, 2, 1)
-		side.add_text(num)
+		margin_x = margin_col - page_margin_x 
 
-		if weekday == 0 and start_week is not None:
-			week_num = Text(f"W{week + start_week}", FONT["Tinier"], LIGHT_PURPLE)
-			week_num.center_in(left_start_x - 1, y, 1, 1)
-			left.add_text(week_num)
+		x = margin_x + col * (width + gap_col)
 
-		day = day + 1
-
-		weekday = weekday + 1
-		if weekday == 7:
-			weekday = 0
-			week = week + 1
-	
-	return left, right
-
-def make_month_plan(month, num_days, start_day):
-	left = make_blank_grid()
-	right = make_blank_grid()
-
-	weekday = start_day
-	for day in range(1, num_days + 1):
-		num = Text(str(day), FONT["Tiny"], LIGHT_PURPLE)
-		num.center_in(0, GRID_HEIGHT - day, 1, 1)
-		right.add_text(num)
-		name = Text(WEEKDAYS[weekday][0], FONT["Tiny"], LIGHT_PURPLE)
-		name.center_in(1, GRID_HEIGHT - day, 1, 1)
-		right.add_text(name)
-		weekday = weekday + 1
-		if weekday == 7:
-			weekday = 0
-	
-	right.grid.add_vertical_segment(1, GRID_HEIGHT - num_days, GRID_HEIGHT, Stroke.DARK)
-	right.grid.add_vertical_segment(2, GRID_HEIGHT - num_days, GRID_HEIGHT, Stroke.DARK)
-	right.grid.add_vertical_segment(GRID_WIDTH // 2, 0, GRID_HEIGHT, Stroke.DARK)
-	right.grid.add_horizontal_segment(GRID_HEIGHT - num_days, 0, GRID_WIDTH // 2, Stroke.DARK)
-
-	return left, right
-	
-def make_weekly_layout(month, week, start_day):
-	left = make_blank_grid()
-	right = make_blank_grid()
-
-	header_height = 2
-	num_width = 2
-	name_width = 5
-	month_width = 6
-	week_width = 4
-
-	left.grid.add_blank_rectangle(0, GRID_HEIGHT - header_height, month_width, header_height, Stroke.DARKER)
-	left.grid.add_blank_rectangle(month_width, GRID_HEIGHT - header_height, week_width, header_height, Stroke.DARKER)
-	month = Text(MONTHS[month], FONT["Big"], LIGHT_PURPLE)
-	month.center_in(0, GRID_HEIGHT - header_height, month_width, header_height)
-	left.add_text(month)
-	week = Text(f"Week {week + 1}", FONT["Small"], LIGHT_PURPLE)
-	week.center_in(month_width, GRID_HEIGHT - header_height, week_width, header_height)
-	left.add_text(week)
-
-	
-	for i in range(0, 7):
-		if i < 3:
-			side = left
-			j = i + 1
+		if GAP_ROW == 0:
+			gap_row = ((page_height + 2 * page_margin_y) - PAGE_ROWS * height) / PAGE_ROWS
+			margin_row = gap_row / 2
 		else:
-			side = right
-			j = i - 3
+			gap_row = GAP_ROW
+			margin_row = (page_height + 2 * page_margin_y - PAGE_ROWS * height - (PAGE_ROWS - 1) * GAP_ROW) / 2
 
-		y_top = GRID_HEIGHT - j * WEEK_DAY_HEIGHT
-		y_bottom = GRID_HEIGHT - (j + 1) * WEEK_DAY_HEIGHT
+		margin_y = margin_row - page_margin_y
 
-		side.grid.add_rectangle(0, y_bottom, WEEK_DAY_WIDTH, WEEK_DAY_HEIGHT, Stroke.DARKER)
-		side.grid.add_blank_rectangle(0, y_top - header_height, num_width, header_height, Stroke.DARKER)
-		num = Text(str(start_day + i), FONT["Big"], LIGHT_PURPLE)
-		num.center_in(0, y_top - header_height, num_width, header_height)
-		side.add_text(num)
+		y = margin_y + row * (height + gap_row)
 
-		side.grid.add_blank_rectangle(0, y_top - header_height - name_width, num_width, name_width, Stroke.DARKER)
-		name = Text(WEEKDAYS[i], FONT["Small"], LIGHT_PURPLE, Orientation.VERTICAL, reverse=True)
-		name.center_in(0, y_top - header_height - name_width, num_width, name_width)
-		side.add_text(name)
-	
-		
+		self.grid.render(printer, x, y)
 
-	return left, right
+
+		for t in self.text:
+			self._render_text(printer, t, x, y)
+

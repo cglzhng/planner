@@ -283,18 +283,6 @@ class Grid(object):
 			start = 0
 		insert_segment(self.vertical[column], Segment(stroke, start, end))
 	
-	def add_blank_rectangle(self, x, y, width, height, stroke):
-		self.add_rectangle(x, y, width, height, stroke)
-		for i in range(1, width):
-			self.add_vertical_segment(x + i, y, y + height, Stroke.BLANK)
-		for i in range(1, height):
-			self.add_horizontal_segment(y + i, x, x + width, Stroke.BLANK)
-
-	def add_rectangle(self, x, y, width, height, stroke):
-		self.add_horizontal_segment(y, x, x + width, stroke)
-		self.add_horizontal_segment(y + height, x, x + width, stroke)
-		self.add_vertical_segment(x, y, y + height, stroke)
-		self.add_vertical_segment(x + width, y, y + height, stroke)
 
 	def render(self, printer, x, y):
 		for i, line in enumerate(self.vertical):
