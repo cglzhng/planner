@@ -13,6 +13,19 @@ def print_stroke(stroke):
 	if stroke == Stroke.SOLID:
 		print("SOLID")
 
+def print_rectangle(x, y, width, height):
+	print(f"""
+newpath
+{x} {y} moveto
+{x + width} {y} L
+{x + width} {y + height} L
+{x} {y + height} L
+closepath
+""")
+
+def print_fill():
+	print("fill")
+
 def print_line(x1, y1, x2, y2):
 	print(f"{x1} {y1} {x2} {y2} LINE")
 
@@ -69,6 +82,7 @@ def print_preamble(paper):
 	print("""
 %%EndPageSetup
 /LINE { newpath moveto lineto } def
+/L { lineto } def
 /SOLID { [] 0 setdash stroke } def
 /T_HORIZ { moveto show } def
 /T_VERT {

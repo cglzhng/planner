@@ -175,6 +175,18 @@ class Printer(object):
 			print_line(x_min + x1, y_min + y1, x_min + x2, y_min + y2)
 
 		print_stroke(stroke)
+	
+	def draw_rectangle(self, x, y, width, height, color):
+		x_min, y_min, x_max, y_max = self._get_min_max()
+		
+		if self.orientation == Orientation.HORIZONTAL:
+			print_rectangle(x_min + y, y_max - x, height, width)
+
+		if self.orientation == Orientation.VERTICAL:
+			print_rectangle(x_min + x, y_min + y, width, height)
+
+		print_set_color(color)
+		print_fill()
 
 	def draw_center_rectangle(self):
 		x_min, y_min, x_max, y_max = self._get_min_max()

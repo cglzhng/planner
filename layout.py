@@ -4,6 +4,24 @@ from constants import *
 from grid import *
 
 @dataclass
+class ColorBox(object):
+	x: int
+	y: int
+	width: int
+	height: int
+	color: Color
+	stroke: Stroke = None
+
+	def add_to_layout(self, layout):
+		if self.width == 0 or self.height == 0:
+			return
+
+		box = Box(self.x, self.y, self.width, self.height, self.stroke, True)
+		box.add_to_layout(layout)
+
+		layout.rect.append(LayoutRect(self.x * UNIT, self.y * UNIT, self.width * UNIT, self.height * UNIT, self.color))
+
+@dataclass
 class Box(object):
 	x: int
 	y: int
@@ -100,10 +118,20 @@ class LayoutText(object):
 	x: float
 	y: float
 
+@dataclass
+class LayoutRect(object):
+	# Unit: pt
+	x: int
+	y: int
+	width: int
+	height: int
+	color: Color
+
 class Layout(object):
 	def __init__(self, force_no_num=False):
 		self.grid = Grid()
 		self.text = []
+		self.rect = []
 		self.force_no_num = force_no_num
 	
 	def add_shape(self, shape):
@@ -112,6 +140,9 @@ class Layout(object):
 	def add_shapes(self, shapes):
 		for shape in shapes:
 			shape.add_to_layout(self)
+	
+	def _render_rect(self, printer, rect, rx, ry):
+		printer.draw_rectangle(rx + rect.x, ry + rect.y, rect.width, rect.height, rect.color)
 	
 	def _render_text(self, printer, layout_text, rx, ry):
 		text = layout_text.text
@@ -158,8 +189,10 @@ class Layout(object):
 
 		y = margin_y + row * (height + gap_row)
 
-		self.grid.render(printer, x, y)
+		for r in self.rect:
+			self._render_rect(printer, r, x, y)
 
+		self.grid.render(printer, x, y)
 
 		for t in self.text:
 			self._render_text(printer, t, x, y)

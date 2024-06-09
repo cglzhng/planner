@@ -203,7 +203,7 @@ def make_weekly_layout(month, num_days, week, start_day):
 	left = make_base_grid()
 	right = make_base_grid()
 
-	header_height = 2
+	header_height = 1
 	num_width = 2
 	name_width = 10
 	month_width = 10
@@ -218,17 +218,17 @@ def make_weekly_layout(month, num_days, week, start_day):
 		month_str = f"{MONTH_NAMES_SHORT[month.value]}-{MONTH_NAMES_SHORT[next_month.value]}"
 
 	left.add_shape(TextBox(
-		Box(num_width, GRID_HEIGHT - header_height, month_width, header_height, Stroke.DARK, True),
-		Text(month_str, FONT["Big"], LIGHT_PURPLE),
+		ColorBox(0, GRID_HEIGHT - header_height - 1, month_width, header_height + 1, LIGHT_PURPLE, Stroke.DARK),
+		Text(month_str, FONT["Big"], WHITE),
 		padding_left = 7,
 		align_h = Align.START,
 	))
 	left.add_shape(TextBox(
-		Box(0, GRID_HEIGHT - header_height, week_width, header_height, Stroke.DARK, True),
+		Box(month_width, GRID_HEIGHT - header_height - 1, week_width, header_height + 1, Stroke.DARK, True),
 		Text(f"W{week}", FONT["Small"], LIGHT_PURPLE),
 	))
 	left.add_shape(TextBox(
-		Box(0, GRID_HEIGHT - header_height - 1, 5, 1, Stroke.DARK, True),
+		Box(0, GRID_HEIGHT - header_height - 2, 5, 1, Stroke.DARK, True),
 		Text("Priorities", FONT["Small"], LIGHT_PURPLE),
 	))
 
@@ -251,12 +251,12 @@ def make_weekly_layout(month, num_days, week, start_day):
 		side.add_shape(Box(x, y_bottom, box_width, box_height, Stroke.DARKER))
 		side.add_shape(TextBox(
 			Box(x, y_top - header_height, num_width, header_height, Stroke.DARKER, True),
-			Text(str(day), FONT["Big"], LIGHT_PURPLE),
+			Text(str(day), FONT["Tiny"], LIGHT_PURPLE),
 		))
 
 		side.add_shape(TextBox(
 			Box(x + num_width, y_top - header_height, name_width, header_height, Stroke.DARKER, True),
-			Text(WEEKDAY_NAMES[WEEKDAYS[i].value], FONT["Medium"], LIGHT_PURPLE),
+			Text(WEEKDAY_NAMES[WEEKDAYS[i].value], FONT["Tiny"], LIGHT_PURPLE),
 			padding_left = 7,
 			align_h = Align.START,
 		))
@@ -268,10 +268,10 @@ def make_weekly_layout(month, num_days, week, start_day):
 	right.add_shape(Box(0, notes_box_height, GRID_WIDTH, 1, None, True))
 	right.add_shape(Box(0, notes_box_height, 0, 1, Stroke.BLANK))
 	right.add_shape(Box(GRID_WIDTH, notes_box_height, 0, 1, Stroke.BLANK))
-	right.add_shape(Box(0, 0, GRID_WIDTH, notes_box_height, Stroke.DARK))
+	right.add_shape(Box(0, 0, GRID_WIDTH, notes_box_height, Stroke.LIGHT))
 	right.add_shape(TextBox(
-		Box(0, notes_box_height - notes_height, notes_width, notes_height, Stroke.DARK, True),
-		Text("Notes", FONT["Small"], LIGHT_PURPLE),
+		ColorBox(0, notes_box_height - notes_height, notes_width, notes_height, LIGHT_PURPLE, Stroke.LIGHT),
+		Text("Notes", FONT["Small"], WHITE),
 	))
 
 	return left, right

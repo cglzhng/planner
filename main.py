@@ -57,43 +57,33 @@ measurements = Measurements(
 p = Printer(PAPER, PAPER_ORIENTATION, measurements)
 p.start()
 
-book = Book()
+plain_book = Book()
+planner_book = Book()
+display_book = Book()
 
-"""
-layout = make_test_grid_with_secret(0, 5, Stroke.LIGHT)
-layout.render(p, Side.TOP, 0, 0)
-
-
-layout = make_blank_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
-
+layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 
 for i in range(0, 48):
- 	book.add_layout(layout)
+ 	plain_book.add_layout(layout)
 
-
+blank = make_blank_layout()
+planner_book.add_layout(blank)
+layouts = make_planner(2024, Month.APRIL, 1)
+for layout in layouts:
+	planner_book.add_layout(layout)
+planner_book.add_layout(blank)
 
 plain = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 plan1, plan2 = make_month_plan(Month.DECEMBER, 31, Weekday.SATURDAY)
 month1, month2 = make_month(Month.SEPTEMBER, 31, Weekday.SATURDAY, 5)
-book.add_layout(month1)
-book.add_layout(month2)
-book.add_layout(plan1)
-book.add_layout(plan2)
-week1, week2 = make_weekly_layout(Month.OCTOBER, 18, 6)
-book.add_layout(week1)
-book.add_layout(week2)
+week1, week2 = make_weekly_layout(Month.OCTOBER, 31, 18, 6)
+display_book.add_layout(week1)
+display_book.add_layout(week2)
+display_book.add_layout(month1)
+display_book.add_layout(month2)
+display_book.add_layout(plan1)
+display_book.add_layout(plan2)
 
-"""
-
-blank = make_blank_layout()
-book.add_layout(blank)
-layouts = make_planner(2024, Month.APRIL, 3)
-for layout in layouts:
-	book.add_layout(layout)
-book.add_layout(blank)
-
-book.render(p, debug=False)
-
-eprint(get_weekday_from_date(2000, Month.DECEMBER, 6))
+display_book.render_display(p, debug=False)
 
 p.end()

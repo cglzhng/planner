@@ -69,6 +69,7 @@ class Color(object):
 
 BLACK = Color(0, 0, 0, 1)
 LIGHT_PURPLE = Color(0.40, 0.40, 0, 0)
+WHITE = Color(0, 0, 0, 0)
 
 class Weekday(Enum):
 	MONDAY = 1
