@@ -37,6 +37,7 @@ STROKES = {}
 STROKES[12] = {
 	"light": "[0.20 0.80] 0.10",
 	"dark": "[0.20 0.40] 0.10",
+	"darker": "[0.20 0.10] 0.10",
 }
 
 STROKES[10.5] = {
@@ -106,51 +107,33 @@ class Month(Enum):
 	NOVEMBER = 11
 	DECEMBER = 12
 
-MONTHS = [e for e in Month]
-
-MONTH_NAMES = {
-	Month.JANUARY.value: "January",
-	Month.FEBRUARY.value: "February",
-	Month.MARCH.value: "March",
-	Month.APRIL.value: "April",
-	Month.MAY.value: "May",
-	Month.JUNE.value: "June",
-	Month.JULY.value: "July",
-	Month.AUGUST.value: "August",
-	Month.SEPTEMBER.value: "September",
-	Month.OCTOBER.value: "October",
-	Month.NOVEMBER.value: "November",
-	Month.DECEMBER.value: "December",
-}
-
-MONTH_NAMES_SHORT = {
-	Month.JANUARY.value: "Jan",
-	Month.FEBRUARY.value: "Feb",
-	Month.MARCH.value: "Mar",
-	Month.APRIL.value: "Apr",
-	Month.MAY.value: "May",
-	Month.JUNE.value: "Jun",
-	Month.JULY.value: "Jul",
-	Month.AUGUST.value: "Aug",
-	Month.SEPTEMBER.value: "Sep",
-	Month.OCTOBER.value: "Oct",
-	Month.NOVEMBER.value: "Nov",
-	Month.DECEMBER.value: "Dec",
-}
-
-MONTH_DAYS = {
-	Month.JANUARY.value: 31,
-	Month.FEBRUARY.value: 28,
-	Month.MARCH.value: 31,
-	Month.APRIL.value: 30,
-	Month.MAY.value: 31,
-	Month.JUNE.value: 30,
-	Month.JULY.value: 31,
-	Month.AUGUST.value: 31,
-	Month.SEPTEMBER.value: 30,
-	Month.OCTOBER.value: 31,
-	Month.NOVEMBER.value: 30,
-	Month.DECEMBER.value: 31,
+SV_CALENDAR_SPEC = {
+	"months": {
+		"Spring": {
+			"name": "Spring",
+			"short": "Spring",
+			"days": 28,
+		},
+		"Summer": {
+			"name": "Summer",
+			"short": "Summer",
+			"days": 28,
+		},
+		"Fall": {
+			"name": "Fall",
+			"short": "Fall",
+			"days": 28,
+		},
+		"Winter": {
+			"name": "Winter",
+			"short": "Winter",
+			"days": 28,
+		},
+	},
+	"start_year": 1,
+	"start_month": "Spring",
+	"start_day": 1,
+	"start_weekday": Weekday.MONDAY,
 }
 
 FONTS = {
@@ -191,7 +174,7 @@ FONTS = {
 FONT_FILE = "iosevka-regular.t42"
 FONT = FONTS["Iosevka"]
 
-BOOK_SIZE = PaperSize.A6
+BOOK_SIZE = PaperSize.A5
 
 match BOOK_SIZE:
 	case PaperSize.A5:

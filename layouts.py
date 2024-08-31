@@ -74,13 +74,13 @@ def make_base_grid():
 	
 	return layout
 
-def add_month_header(month, left, right):
+def add_month_header(calendar, month, left, right):
 	width = CALENDAR_DAY_WIDTH
 	height = CALENDAR_HEADER_HEIGHT
 
 	left.add_shape(TextBox(
 		Box(0, GRID_HEIGHT - height, width, height, Stroke.DARK, True),
-		Text(MONTH_NAMES[month.value], FONT["Medium"], LIGHT_PURPLE),
+		Text(calendar.months[month]["name"], FONT["Medium"], LIGHT_PURPLE),
 	))
 
 	for i in range(0, 7):
@@ -99,7 +99,7 @@ def add_month_header(month, left, right):
 		))
 	
 
-def make_month(month, num_days, start_day, start_week=None):
+def make_month(calendar, month, num_days, start_day, start_week=None):
 	left = make_base_grid()
 	right = make_base_grid()
 
@@ -119,7 +119,7 @@ def make_month(month, num_days, start_day, start_week=None):
 
 			side.add_shape(Box(x, start_y, CALENDAR_DAY_WIDTH, CALENDAR_DAY_HEIGHT, Stroke.DARK))
 
-	add_month_header(month, left, right)
+	add_month_header(calendar, month, left, right)
 
 	week = 0
 	weekday = start_day_index
@@ -160,7 +160,7 @@ def make_month(month, num_days, start_day, start_week=None):
 	
 	return left, right
 
-def make_month_plan(month, num_days, start_day):
+def make_month_plan(calendar, month, num_days, start_day):
 	left = make_base_grid()
 	right = make_base_grid()
 
@@ -183,7 +183,7 @@ def make_month_plan(month, num_days, start_day):
 	
 	left.add_shape(TextBox(
 		Box(0, GRID_HEIGHT - 2, 5, 2, Stroke.DARKER, True),
-		Text(MONTH_NAMES[month.value], FONT["Huge"], LIGHT_PURPLE),
+		Text(calendar.months[month]["name"], FONT["Huge"], LIGHT_PURPLE),
 	))
 
 	
@@ -199,7 +199,7 @@ def make_month_plan(month, num_days, start_day):
 
 	return left, right
 	
-def make_weekly_layout(month, num_days, week, start_day):
+def make_weekly_layout(calendar, month, num_days, week, start_day):
 	left = make_base_grid()
 	right = make_base_grid()
 
@@ -212,10 +212,10 @@ def make_weekly_layout(month, num_days, week, start_day):
 	box_width = GRID_WIDTH // 2
 	box_height = GRID_HEIGHT // 3
 
-	month_str = MONTH_NAMES[month.value]
+	month_str = calendar.months[month]["name"]
 	if start_day + 6 > num_days:
-		next_month = MONTHS[(get_month_index(month) + 1) % 12]
-		month_str = f"{MONTH_NAMES_SHORT[month.value]}-{MONTH_NAMES_SHORT[next_month.value]}"
+		next_month = calendar.month_order[(calendar.get_month_index(month) + 1) % len(calendar.month_order)]
+		month_str = f"{calendar.months[month]['short']}-{calendar.months[next_month]['short']}"
 
 	left.add_shape(TextBox(
 		ColorBox(0, GRID_HEIGHT - header_height - 1, month_width, header_height + 1, LIGHT_PURPLE, Stroke.DARK),
@@ -276,40 +276,52 @@ def make_weekly_layout(month, num_days, week, start_day):
 
 	return left, right
 
-def make_planner(year, start_month, num_months):
+def make_monthly_planner(calendar, year, extra_pages):
 	layouts = []
-
-	month_index = get_month_index(start_month)
-
-	for i in range(0, num_months):
-		month = MONTHS[month_index + i]
-		num_days = MONTH_DAYS[month.value]
-		if month == Month.FEBRUARY and is_leap_year(year):
-			num_days = 29
-
-		start_day = get_weekday_from_date(year, month, 1)
-		start_week = get_week_from_date(year, month, 1)
-
-		left, right = make_month(month, num_days, start_day, start_week)
+	for month in calendar.months:
+		num_days = calendar.get_num_days_in_month(year, month)
+		start_day = calendar.get_weekday_from_date(year, month, 1)
+		left, right = make_month(calendar, month, num_days, start_day, None)
 		layouts.append(left)
 		layouts.append(right)
-		left, right = make_month_plan(month, num_days, start_day)
+	
+	for i in range(extra_pages):
+		base = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 7)
+		layouts.append(base)
+
+	return layouts
+
+def make_planner(calendar, year, start_month, num_months):
+	layouts = []
+	month_index = calendar.get_month_index(start_month)
+
+	for i in range(0, num_months):
+		month = calendar.month_order[month_index + i]
+		num_days = calendar.get_num_days_in_month(year, month) 
+
+		start_day = calendar.get_weekday_from_date(year, month, 1)
+		start_week = calendar.get_week_from_date(year, month, 1)
+
+		left, right = make_month(calendar, month, num_days, start_day, start_week)
+		layouts.append(left)
+		layouts.append(right)
+		left, right = make_month_plan(calendar, month, num_days, start_day)
 		layouts.append(left)
 		layouts.append(right)
 	
 	for i in range(0, num_months):
-		month = MONTHS[month_index + i]
-		num_days = get_num_days_in_month(year, month)
-		start_weekday = get_weekday_from_date(year, month, 1)
+		month = calendar.month_order[month_index + i]
+		num_days = calendar.get_num_days_in_month(year, month)
+		start_weekday = calendar.get_weekday_from_date(year, month, 1)
 		start_weekday_index = get_weekday_index(start_weekday)
 		if start_weekday_index != 0:
 			if i == 0:
-				prev_month = MONTHS[month_index + i - 1]
-				prev_month_num_days = get_num_days_in_month(year, prev_month)
+				prev_month = calendar.month_order[month_index + i - 1]
+				prev_month_num_days = calendar.get_num_days_in_month(year, prev_month)
 				start_day = prev_month_num_days - start_weekday_index
-				week = get_week_from_date(year, month, 1)
+				week = calendar.get_week_from_date(year, month, 1)
 
-				left, right = make_weekly_layout(prev_month, prev_month_num_days, week, start_day)
+				left, right = make_weekly_layout(calendar, prev_month, prev_month_num_days, week, start_day)
 				layouts.append(left)
 				layouts.append(right)
 			start_day = 7 - start_weekday_index + 1
@@ -317,12 +329,10 @@ def make_planner(year, start_month, num_months):
 			start_day = 1
 
 		while start_day < num_days:
-			week = get_week_from_date(year, month, start_day)
-			left, right = make_weekly_layout(month, num_days, week, start_day)
+			week = calendar.get_week_from_date(year, month, start_day)
+			left, right = make_weekly_layout(calendar, month, num_days, week, start_day)
 			layouts.append(left)
 			layouts.append(right)
 			start_day += 7
-
-		
 	
 	return layouts

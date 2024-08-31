@@ -1,6 +1,7 @@
 from constants import *
 from utils import *
 
+from calendar import *
 from grid import *
 from printer import *
 from layouts import *
@@ -61,29 +62,42 @@ plain_book = Book()
 planner_book = Book()
 display_book = Book()
 
+sv = StaticCalendar(SV_CALENDAR_SPEC)
+greg = GregorianCalendar()
+
 layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
+blank = make_blank_layout()
 
 for i in range(0, 48):
  	plain_book.add_layout(layout)
 
-blank = make_blank_layout()
+spring1, spring2 = make_month(sv, "Spring", 28, Weekday.MONDAY)
 planner_book.add_layout(blank)
-layouts = make_planner(2024, Month.APRIL, 1)
+layouts = make_monthly_planner(sv, 2, 6)
+for layout in layouts:
+	planner_book.add_layout(layout)
+planner_book.add_layout(blank)
+planner_book.render(p, debug=False)
+
+"""
+planner_book.add_layout(blank)
+layouts = make_planner(greg, 2024, Month.APRIL, 1)
 for layout in layouts:
 	planner_book.add_layout(layout)
 planner_book.add_layout(blank)
 
+
 plain = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
-plan1, plan2 = make_month_plan(Month.DECEMBER, 31, Weekday.SATURDAY)
-month1, month2 = make_month(Month.SEPTEMBER, 31, Weekday.SATURDAY, 5)
-week1, week2 = make_weekly_layout(Month.OCTOBER, 31, 18, 6)
+plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
+month1, month2 = make_month(greg, Month.SEPTEMBER, 31, Weekday.SATURDAY, 5)
+week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
 display_book.add_layout(week1)
 display_book.add_layout(week2)
 display_book.add_layout(month1)
 display_book.add_layout(month2)
 display_book.add_layout(plan1)
 display_book.add_layout(plan2)
-
 display_book.render_display(p, debug=False)
+"""
 
 p.end()
