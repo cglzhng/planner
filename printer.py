@@ -180,7 +180,7 @@ class Printer(object):
 		x_min, y_min, x_max, y_max = self._get_min_max()
 		
 		if self.orientation == Orientation.HORIZONTAL:
-			print_rectangle(x_min + y, y_max - x, height, width)
+			print_rectangle(x_min + y, y_max - x - width, height, width)
 
 		if self.orientation == Orientation.VERTICAL:
 			print_rectangle(x_min + x, y_min + y, width, height)

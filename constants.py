@@ -68,8 +68,14 @@ class Color(object):
 		self.y = y
 		self.k = k
 
-BLACK = Color(0, 0, 0, 1)
-LIGHT_PURPLE = Color(0.40, 0.40, 0, 0)
+BLACK = Color(0, 0, 0, 255)
+LIGHT_PURPLE = Color(0.4, 0.4, 0, 0)
+LIGHT_GREEN = Color(0.5, 0, 0.5, 0)
+LIGHT_RED = Color(0, 0.75, 0.5, 0)
+BRIGHT_RED = Color(0, 0.8, 0.8, 0)
+BLUE_GRAY = Color(0.2, 0, 0, 0.4)
+BROWN = Color(0, 0.4, 0.7, 0.2)
+TEAL = Color(0.8, 0, 0.3, 0)
 WHITE = Color(0, 0, 0, 0)
 
 class Weekday(Enum):
@@ -164,7 +170,7 @@ FONTS = {
 			"height_ratio": 5 / 7,
 		},
 		"Huge": {
-			"size": 16,
+			"size": 18,
 			"width_ratio": 1 / 2,
 			"height_ratio": 5 / 7,
 		},

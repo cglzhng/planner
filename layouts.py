@@ -24,6 +24,96 @@ def make_test_grid_with_secret(start, num, stroke):
 	
 	return layout
 
+def make_color_test():
+	layout = make_base_grid()
+	layout.force_no_num = True
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 0, 8, 4, LIGHT_PURPLE, Stroke.DARK),
+		Text("Light Purple", FONT["Big"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 0, 8, 4, None, Stroke.BLANK),
+		Text("Light Purple", FONT["Big"], LIGHT_PURPLE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 6, 8, 4, LIGHT_GREEN, Stroke.DARK),
+		Text("Light Green", FONT["Big"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 6, 8, 4, None, Stroke.BLANK),
+		Text("Light Green", FONT["Big"], LIGHT_GREEN),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 12, 8, 4, LIGHT_RED, Stroke.DARK),
+		Text("Light Red", FONT["Big"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 12, 8, 4, None, Stroke.BLANK),
+		Text("Light Red", FONT["Big"], LIGHT_RED),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 18, 8, 4, BRIGHT_RED, Stroke.DARK),
+		Text("Bright Red", FONT["Big"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 18, 8, 4, None, Stroke.BLANK),
+		Text("Bright Red", FONT["Big"], BRIGHT_RED),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 24, 8, 4, BLUE_GRAY, Stroke.DARK),
+		Text("Blue Gray", FONT["Big"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 24, 8, 4, None, Stroke.BLANK),
+		Text("Blue Gray", FONT["Big"], BLUE_GRAY),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 30, 8, 4, BROWN, Stroke.DARK),
+		Text("Brown", FONT["Huge"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 30, 8, 4, None, Stroke.BLANK),
+		Text("Brown", FONT["Huge"], BROWN),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 36, 8, 4, TEAL, Stroke.DARK),
+		Text("Teal", FONT["Huge"], WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(10, 36, 8, 4, None, Stroke.BLANK),
+		Text("Teal", FONT["Huge"], TEAL),
+		padding_left = 7,
+	))
+
+	return layout
+
 
 # grid with r rows and c columns
 # hobonichi secret line at column s
