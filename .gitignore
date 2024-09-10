@@ -1,6 +1,7 @@
 *.ps
 *.pdf
 *.t42
+*.ttf
 __pycache__
 node_modules
 

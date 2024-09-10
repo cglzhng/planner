@@ -24,102 +24,196 @@ def make_test_grid_with_secret(start, num, stroke):
 	
 	return layout
 
+def make_typeset_test():
+	layout = make_base_grid()
+
+	layout.add_shape(TextBox(
+		Box(5, 5, 14, 26, Stroke.DARKER, True),
+		Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", "Small", BLACK),
+		padding_left=10,
+		padding_right=10,
+	))
+
+	return layout
+
 def make_color_test():
 	layout = make_base_grid()
 	layout.force_no_num = True
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 0, 8, 4, LIGHT_PURPLE, Stroke.DARK),
-		Text("Light Purple", FONT["Big"], WHITE),
+		ColorBox(0, 0, 6, 2, LIGHT_PURPLE, Stroke.DARKER),
+		Text("Light Purple", "Small", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 0, 8, 4, None, Stroke.BLANK),
-		Text("Light Purple", FONT["Big"], LIGHT_PURPLE),
+		ColorBox(7, 0, 5, 1, LIGHT_PURPLE, Stroke.DARKER),
+		Text("Light Purple", "Tiny", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 6, 8, 4, LIGHT_GREEN, Stroke.DARK),
-		Text("Light Green", FONT["Big"], WHITE),
+		Box(13, 0, 6, 2, None, Stroke.BLANK),
+		Text("Light Purple", "Small", LIGHT_PURPLE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 6, 8, 4, None, Stroke.BLANK),
-		Text("Light Green", FONT["Big"], LIGHT_GREEN),
+		Box(20, 0, 4, 1, None, Stroke.BLANK),
+		Text("Light Purple", "Tiny", LIGHT_PURPLE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 12, 8, 4, LIGHT_RED, Stroke.DARK),
-		Text("Light Red", FONT["Big"], WHITE),
+		ColorBox(0, 3, 6, 2, LIGHT_GREEN, Stroke.DARKER),
+		Text("Light Green", "Small", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 12, 8, 4, None, Stroke.BLANK),
-		Text("Light Red", FONT["Big"], LIGHT_RED),
+		ColorBox(7, 3, 5, 1, LIGHT_GREEN, Stroke.DARKER),
+		Text("Light Green", "Tiny", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 18, 8, 4, BRIGHT_RED, Stroke.DARK),
-		Text("Bright Red", FONT["Big"], WHITE),
+		Box(13, 3, 6, 2, None, Stroke.BLANK),
+		Text("Light Green", "Small", LIGHT_GREEN),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 18, 8, 4, None, Stroke.BLANK),
-		Text("Bright Red", FONT["Big"], BRIGHT_RED),
+		Box(20, 3, 4, 1, None, Stroke.BLANK),
+		Text("Light Green", "Tiny", LIGHT_GREEN),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 24, 8, 4, BLUE_GRAY, Stroke.DARK),
-		Text("Blue Gray", FONT["Big"], WHITE),
+		ColorBox(0, 6, 6, 2, LIGHT_RED, Stroke.DARKER),
+		Text("Light Red", "Small", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 24, 8, 4, None, Stroke.BLANK),
-		Text("Blue Gray", FONT["Big"], BLUE_GRAY),
+		ColorBox(7, 6, 5, 1, LIGHT_RED, Stroke.DARKER),
+		Text("Light Red", "Tiny", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 30, 8, 4, BROWN, Stroke.DARK),
-		Text("Brown", FONT["Huge"], WHITE),
+		Box(13, 6, 6, 2, None, Stroke.BLANK),
+		Text("Light Red", "Small", LIGHT_RED),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 30, 8, 4, None, Stroke.BLANK),
-		Text("Brown", FONT["Huge"], BROWN),
+		Box(20, 6, 4, 1, None, Stroke.BLANK),
+		Text("Light Red", "Tiny", LIGHT_RED),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		ColorBox(0, 36, 8, 4, TEAL, Stroke.DARK),
-		Text("Teal", FONT["Huge"], WHITE),
+		ColorBox(0, 9, 6, 2, BRIGHT_RED, Stroke.DARKER),
+		Text("Bright Red", "Small", WHITE),
 		padding_left = 7,
 	))
 
 	layout.add_shape(TextBox(
-		Box(10, 36, 8, 4, None, Stroke.BLANK),
-		Text("Teal", FONT["Huge"], TEAL),
+		ColorBox(7, 9, 5, 1, BRIGHT_RED, Stroke.DARKER),
+		Text("Bright Red", "Tiny", WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(13, 9, 6, 2, None, Stroke.BLANK),
+		Text("Bright Red", "Small", BRIGHT_RED),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(20, 9, 4, 1, None, Stroke.BLANK),
+		Text("Bright Red", "Tiny", BRIGHT_RED),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 12, 6, 2, BLUE_GRAY, Stroke.DARKER),
+		Text("Blue Gray", "Small", WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(7, 12, 5, 1, BLUE_GRAY, Stroke.DARKER),
+		Text("Blue Gray", "Tiny", WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(13, 12, 6, 2, None, Stroke.BLANK),
+		Text("Blue Gray", "Small", BLUE_GRAY),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(20, 12, 4, 1, None, Stroke.BLANK),
+		Text("Blue Gray", "Tiny", BLUE_GRAY),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(0, 15, 6, 2, BROWN, Stroke.DARKER),
+		Text("Brown", "Small", WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		ColorBox(7, 15, 5, 1, BROWN, Stroke.DARKER),
+		Text("Brown", "Tiny", WHITE),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(13, 15, 6, 2, None, Stroke.BLANK),
+		Text("Brown", "Small", BROWN),
+		padding_left = 7,
+	))
+
+	layout.add_shape(TextBox(
+		Box(20, 15, 4, 1, None, Stroke.BLANK),
+		Text("Brown", "Tiny", BROWN),
 		padding_left = 7,
 	))
 
 	return layout
 
+def make_grid(r, c, stroke=Stroke.LIGHT, color=None):
+	if color is None:
+		color = BLACK
+
+	layout = Layout()
+	shapes = []
+
+	# horizontal lines
+	shapes.append(Box(0, 0, c, 0, stroke, color=color))
+	for i in range(1, r):
+		shapes.append(Box(0, i, c, 0, stroke, color=color))
+	shapes.append(Box(0, r, c, 0, stroke, color=color))
+
+	# vertical lines
+	shapes.append(Box(0, 0, 0, r, stroke, color=color))
+	for i in range(1, c):
+		shapes.append(Box(i, 0, 0, r, stroke, color=color))
+	shapes.append(Box(c, 0, 0, r, stroke, color=color))
+
+	layout.add_shapes(shapes)
+	
+	return layout
+	
 
 # grid with r rows and c columns
 # hobonichi secret line at column s
 def make_base_grid_with_secret(r, c, s):
 	layout = Layout()
-
 	shapes = []
 
 	# horizontal lines
@@ -145,7 +239,6 @@ def make_blank_layout():
 
 def make_base_grid():
 	layout = Layout()
-
 	shapes = []
 
 	# horizontal lines
@@ -169,8 +262,8 @@ def add_month_header(calendar, month, left, right):
 	height = CALENDAR_HEADER_HEIGHT
 
 	left.add_shape(TextBox(
-		Box(0, GRID_HEIGHT - height, width, height, Stroke.DARK, True),
-		Text(calendar.months[month]["name"], FONT["Medium"], LIGHT_PURPLE),
+		ColorBox(0, GRID_HEIGHT - height, width, height, BLUE_GRAY, Stroke.DARKER),
+		Text(calendar.months[month]["name"], "Medium", WHITE),
 	))
 
 	for i in range(0, 7):
@@ -182,10 +275,14 @@ def add_month_header(calendar, month, left, right):
 			side = right
 			i = i - 3
 			start_x = 0
+
+		color = BLUE
+		if day == Weekday.SATURDAY or day == Weekday.SUNDAY:
+			color = RED
 			
 		side.add_shape(TextBox(
 			Box(start_x + i * width, GRID_HEIGHT - height, width, height, Stroke.DARKER, True),
-			Text(WEEKDAY_NAMES[day.value], CALENDAR_HEADER_TEXT, LIGHT_PURPLE),
+			Text(WEEKDAY_NAMES[day.value], CALENDAR_HEADER_TEXT, color),
 		))
 	
 
@@ -229,16 +326,20 @@ def make_month(calendar, month, num_days, start_day, start_week=None):
 			x = CALENDAR_DAY_WIDTH * (weekday - 3)
 			side = right
 
+		color = LIGHT_BLUE
+		if WEEKDAYS[weekday] == Weekday.SATURDAY or WEEKDAYS[weekday] == Weekday.SUNDAY:
+			color = LIGHT_RED
+
 		side.add_shape(Box(x, y, CALENDAR_DAY_WIDTH, height, Stroke.DARKER))
 		side.add_shape(TextBox(
-			Box(x, y + height - 1, 2, 1, Stroke.DARKER, True),
-			Text(str(day + 1), FONT["Tiny"], LIGHT_PURPLE),
+			ColorBox(x, y + height - 1, 2, 1, color, Stroke.DARKER),
+			Text(str(day + 1), "Tiny", WHITE),
 		))
 
 		if weekday == 0 and height == CALENDAR_DAY_HEIGHT and start_week is not None:
 			left.add_shape(TextBox(
 				Box(left_start_x - 1, y, 1, 1, None),
-				Text(f"W{week + start_week}", FONT["Tinier"], LIGHT_PURPLE),
+				Text(f"W{week + start_week}", "Tinier", LIGHT_PURPLE),
 			))
 
 		day = day + 1
@@ -261,19 +362,19 @@ def make_month_plan(calendar, month, num_days, start_day):
 	for day in range(1, num_days + 1):
 		right.add_shape(TextBox(
 			Box(0, GRID_HEIGHT - day, 1, 1, None),
-			Text(str(day), FONT["Tiny"], LIGHT_PURPLE),
+			Text(str(day), "Tiny", LIGHT_PURPLE),
 		))
 		right.add_shape(TextBox(
 			Box(1, GRID_HEIGHT - day, 1, 1),
-			Text(WEEKDAY_NAMES[WEEKDAYS[weekday_index].value][0], FONT["Tiny"], LIGHT_PURPLE),
+			Text(WEEKDAY_NAMES[WEEKDAYS[weekday_index].value][0], "Tiny", LIGHT_PURPLE),
 		))
 		weekday_index = weekday_index + 1
 		if weekday_index == 7:
 			weekday_index = 0
 	
 	left.add_shape(TextBox(
-		Box(0, GRID_HEIGHT - 2, 5, 2, Stroke.DARKER, True),
-		Text(calendar.months[month]["name"], FONT["Huge"], LIGHT_PURPLE),
+		Box(0, GRID_HEIGHT - 2, 6, 2, Stroke.DARKER, True),
+		Text(calendar.months[month]["name"], "Medium", LIGHT_PURPLE),
 	))
 
 	
@@ -284,7 +385,7 @@ def make_month_plan(calendar, month, num_days, start_day):
 
 	right.add_shape(TextBox(
 		Box(half_width, GRID_HEIGHT - 1, 5, 1, Stroke.DARK, True),
-		Text("This month", FONT["Small"], LIGHT_PURPLE),
+		Text("This month", "Small", LIGHT_PURPLE),
 	))
 
 	return left, right
@@ -309,17 +410,17 @@ def make_weekly_layout(calendar, month, num_days, week, start_day):
 
 	left.add_shape(TextBox(
 		ColorBox(0, GRID_HEIGHT - header_height - 1, month_width, header_height + 1, LIGHT_PURPLE, Stroke.DARK),
-		Text(month_str, FONT["Big"], WHITE),
+		Text(month_str, "Big", WHITE),
 		padding_left = 7,
 		align_h = Align.START,
 	))
 	left.add_shape(TextBox(
 		Box(month_width, GRID_HEIGHT - header_height - 1, week_width, header_height + 1, Stroke.DARK, True),
-		Text(f"W{week}", FONT["Small"], LIGHT_PURPLE),
+		Text(f"W{week}", "Small", LIGHT_PURPLE),
 	))
 	left.add_shape(TextBox(
 		Box(0, GRID_HEIGHT - header_height - 2, 5, 1, Stroke.DARK, True),
-		Text("Priorities", FONT["Small"], LIGHT_PURPLE),
+		Text("Priorities", "Small", LIGHT_PURPLE),
 	))
 
 	for i in range(0, 7):
@@ -341,12 +442,12 @@ def make_weekly_layout(calendar, month, num_days, week, start_day):
 		side.add_shape(Box(x, y_bottom, box_width, box_height, Stroke.DARKER))
 		side.add_shape(TextBox(
 			Box(x, y_top - header_height, num_width, header_height, Stroke.DARKER, True),
-			Text(str(day), FONT["Tiny"], LIGHT_PURPLE),
+			Text(str(day), "Tiny", LIGHT_PURPLE),
 		))
 
 		side.add_shape(TextBox(
 			Box(x + num_width, y_top - header_height, name_width, header_height, Stroke.DARKER, True),
-			Text(WEEKDAY_NAMES[WEEKDAYS[i].value], FONT["Tiny"], LIGHT_PURPLE),
+			Text(WEEKDAY_NAMES[WEEKDAYS[i].value], "Tiny", LIGHT_PURPLE),
 			padding_left = 7,
 			align_h = Align.START,
 		))
@@ -361,7 +462,7 @@ def make_weekly_layout(calendar, month, num_days, week, start_day):
 	right.add_shape(Box(0, 0, GRID_WIDTH, notes_box_height, Stroke.LIGHT))
 	right.add_shape(TextBox(
 		ColorBox(0, notes_box_height - notes_height, notes_width, notes_height, LIGHT_PURPLE, Stroke.LIGHT),
-		Text("Notes", FONT["Small"], WHITE),
+		Text("Notes", "Small", WHITE),
 	))
 
 	return left, right

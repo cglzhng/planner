@@ -30,7 +30,7 @@ class Printer(object):
 		self.orientation = orientation
 		self.measurements = measurements
 
-		self.set_values()
+		self._set_values()
 
 		self.side = Side.TOP
 
@@ -40,7 +40,7 @@ class Printer(object):
 	def end(self):
 		print_end()
 	
-	def set_values(self):
+	def _set_values(self):
 
 		if self.orientation == Orientation.HORIZONTAL:
 			top_margins = self.measurements.tumble_top_margins
@@ -163,10 +163,14 @@ class Printer(object):
 					print_text_vertical(text, size, x_min + x, y_min + y, color)
 				
 	
-	def draw_line(self, x1, y1, x2, y2, stroke):
+	def draw_line(self, x1, y1, x2, y2, stroke, color):
 		x_min, y_min, x_max, y_max = self._get_min_max()
 
 		print_newpath()
+		if color is not None:
+			print_set_color(color)
+		else:
+			print_set_color(BLACK)
 
 		if (self.orientation == Orientation.HORIZONTAL):
 			print_line(x_min + y1, y_max - x1, x_min + y2, y_max - x2)

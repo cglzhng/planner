@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from constants import *
 from grid import *
+from typeset import *
 
 @dataclass
 class ColorBox(object):
@@ -29,17 +30,18 @@ class Box(object):
 	height: int
 	stroke: Stroke = None
 	blank: bool = False
+	color:  Color = None
 
 	def add_to_layout(self, layout):
 		if self.width == 0 and self.height == 0:
 			return
 
 		if self.width == 0 and self.stroke is not None:
-			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke)
+			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke, self.color)
 			return
 
 		if self.height == 0 and self.stroke is not None:
-			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke)
+			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke, self.color)
 			
 		if self.blank:
 			for i in range(1, self.width):
@@ -48,15 +50,15 @@ class Box(object):
 				layout.grid.add_horizontal_segment(self.y + i, self.x, self.x + self.width, Stroke.BLANK)
 
 		if self.stroke is not None:
-			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke)
-			layout.grid.add_horizontal_segment(self.y + self.height, self.x, self.x + self.width, self.stroke)
-			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke)
-			layout.grid.add_vertical_segment(self.x + self.width, self.y, self.y + self.height, self.stroke)
+			layout.grid.add_horizontal_segment(self.y, self.x, self.x + self.width, self.stroke, self.color)
+			layout.grid.add_horizontal_segment(self.y + self.height, self.x, self.x + self.width, self.stroke, self.color)
+			layout.grid.add_vertical_segment(self.x, self.y, self.y + self.height, self.stroke, self.color)
+			layout.grid.add_vertical_segment(self.x + self.width, self.y, self.y + self.height, self.stroke, self.color)
 
 @dataclass
 class Text(object):
 	string: str
-	size: dict 
+	size: str 
 	color: Color = BLACK
 	align: Side = Side.LEFT
 	orientation: Orientation = Orientation.HORIZONTAL
@@ -79,38 +81,22 @@ class TextBox(object):
 
 		box.add_to_layout(layout)
 
-		length = len(text.string) * text.size["size"] * text.size["width_ratio"]
-		girth = text.size["size"] * text.size["height_ratio"]
-
-		if text.orientation == Orientation.HORIZONTAL:
-			text_width = length
-			text_height = girth
-		if text.orientation == Orientation.VERTICAL:
-			text_width = girth
-			text_height = length
-
-		box_x = box.x * UNIT
-		box_y = box.y * UNIT
-		box_width = box.width * UNIT
-		box_height = box.height * UNIT
-
-		if self.align_h == Align.CENTER:
-			t_x = (box_width - text_width) / 2
-			x = box_x + t_x
-		if self.align_h == Align.START:
-			x = box_x + self.padding_left
-		if self.align_h == Align.END:
-			x = box_x + box_width - text_width - self.padding_right
-
-		if self.align_v == Align.CENTER:
-			t_y = (box_height - text_height) / 2
-			y = box_y + t_y
-		if self.align_v == Align.START:
-			y = box_y + box_height - text_height - self.padding_top
-		if self.align_v == Align.END:
-			y = box_y + self.padding_bottom
-
-		layout.text.append(LayoutText(text, x, y))
+		strings = render_textbox(self)
+		for string in strings:
+			layout.text.append(
+				LayoutText(
+					Text(
+						string["string"],
+						self.text.size,
+						self.text.color,
+						self.text.align,
+						self.text.orientation,
+						self.text.reverse,
+					),
+					string["x"],
+					string["y"],
+				)
+			)
 
 @dataclass
 class LayoutText(object):
@@ -146,12 +132,12 @@ class Layout(object):
 	
 	def _render_text(self, printer, layout_text, rx, ry):
 		text = layout_text.text
-		printer.draw_text(text.string, rx + layout_text.x, ry + layout_text.y, text.size["size"], text.color, text.orientation, text.reverse)
+		printer.draw_text(text.string, rx + layout_text.x, ry + layout_text.y, FONT["Sizes"][text.size], text.color, text.orientation, text.reverse)
 
 	
 	def render(self, printer, side, col, row, num=None):
 		if not self.force_no_num and num is not None:
-			t = Text(str(num), FONT["Tiny"], LIGHT_PURPLE)
+			t = Text(str(num), "Tiny", LIGHT_PURPLE)
 			if side == Side.LEFT:
 				box = Box(0, 0, 1, 1)
 			if side == Side.RIGHT:

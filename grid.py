@@ -252,10 +252,11 @@ def test_insert_segment():
 	])
 
 class Segment(object):
-	def __init__(self, stroke, start, end):
+	def __init__(self, stroke, start, end, color=None):
 		self.stroke = stroke
 		self.start = start
 		self.end = end
+		self.color = color
 	
 	def __repr__(self):
 		return f"{self.stroke} [{self.start}, {self.end}]"
@@ -265,24 +266,23 @@ class Grid(object):
 		self.horizontal = [[] for i in range(0, GRID_HEIGHT + 1)]
 		self.vertical = [[] for i in range(0, GRID_WIDTH + 1)]
 
-	def add_horizontal_segment(self, row, start, end, stroke):
+	def add_horizontal_segment(self, row, start, end, stroke, color=None):
 		if row >= len(self.horizontal) or row < 0 or end < start:
 			return
 		if end >= len(self.vertical):
 			end = len(self.vertical) - 1
 		if start < 0:
 			start = 0
-		insert_segment(self.horizontal[row], Segment(stroke, start, end))
+		insert_segment(self.horizontal[row], Segment(stroke, start, end, color))
 
-	def add_vertical_segment(self, column, start, end, stroke):
+	def add_vertical_segment(self, column, start, end, stroke, color=None):
 		if column >= len(self.vertical) or column < 0 or end < start:
 			return
 		if end >= len(self.horizontal):
 			end = len(self.horizontal) - 1
 		if start < 0:
 			start = 0
-		insert_segment(self.vertical[column], Segment(stroke, start, end))
-	
+		insert_segment(self.vertical[column], Segment(stroke, start, end, color))
 
 	def render(self, printer, x, y):
 		for i, line in enumerate(self.vertical):
@@ -295,6 +295,7 @@ class Grid(object):
 					x + i * UNIT, 
 					y + segment.end * UNIT,
 					segment.stroke,
+                    segment.color,
 				)
 
 		for i, line in enumerate(self.horizontal):
@@ -307,5 +308,6 @@ class Grid(object):
 					x + segment.end * UNIT,
 					y + i * UNIT,
 					segment.stroke,
+                    segment.color,
 				)
 

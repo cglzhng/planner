@@ -29,24 +29,26 @@ def print_fill():
 def print_line(x1, y1, x2, y2):
 	print(f"{x1} {y1} {x2} {y2} LINE")
 
-def print_text_vertical(text, size, x, y, color):
+def print_text_vertical(text, size, x, y, color, style="Regular"):
 	print_set_color(color)
-	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT")
+	font_name = FONT["Styles"][style]["name"]
+	print(f"{-x} {-y} ({text}) {x} {y} /{font_name} findfont {size} scalefont setfont T_VERT")
 
-def print_text_vertical_reverse(text, size, x, y, color):
+def print_text_vertical_reverse(text, size, x, y, color, style="Regular"):
 	print_set_color(color)
-	print(f"{-x} {-y} ({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_VERT_REVERSE")
+	font_name = FONT["Styles"][style]["name"]
+	print(f"{-x} {-y} ({text}) {x} {y} /{font_name} findfont {size} scalefont setfont T_VERT_REVERSE")
 
-def print_text_horizontal(text, size, x, y, color):
+def print_text_horizontal(text, size, x, y, color, style="Regular"):
 	print_set_color(color)
-	print(f"({text}) {x} {y} /PlannerFont findfont {size} scalefont setfont T_HORIZ")
+	font_name = FONT["Styles"][style]["name"]
+	print(f"({text}) {x} {y} /{font_name} findfont {size} scalefont setfont T_HORIZ")
 
 def print_showpage():
 	print("showpage")
 
 def print_newpath():
 	print("newpath")
-	print("0 0 0 1 setcmykcolor")
 	print("0.12 setlinewidth")
 
 def print_preamble(paper):
@@ -80,7 +82,7 @@ def print_preamble(paper):
 << /PageSize [{width} {height}] /Duplex true /Tumble {'true' if PAPER_ORIENTATION == Orientation.HORIZONTAL else 'false'} >> setpagedevice
 """)
 	print("""
-%%EndPageSetup
+%%EndPageSetup(f"{x1} {y1} {x2} {y2} LINE")
 /LINE { newpath moveto lineto } def
 /L { lineto } def
 /SOLID { [] 0 setdash stroke } def
@@ -110,8 +112,10 @@ translate
 	print_font()
 
 def print_font():
-	with open(f"{FONT_FILE}") as f:
-		print(f.read())
+	for style in FONT["Styles"]:
+		filename = FONT["Styles"][style]["t42"]
+		with open(filename) as f:
+			print(f.read())
 
 def print_end():
 	print("""

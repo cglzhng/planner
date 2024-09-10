@@ -68,9 +68,6 @@ greg = GregorianCalendar()
 layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 blank = make_blank_layout()
 
-color_test = make_color_test()
-display_book.add_layout(color_test)
-display_book.render_display(p, debug=False)
 """
 for i in range(0, 48):
  	plain_book.add_layout(layout)
@@ -88,8 +85,11 @@ layouts = make_planner(greg, 2024, Month.APRIL, 1)
 for layout in layouts:
 	planner_book.add_layout(layout)
 planner_book.add_layout(blank)
+"""
 
 
+typeset = make_typeset_test()
+"""
 plain = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
 month1, month2 = make_month(greg, Month.SEPTEMBER, 31, Weekday.SATURDAY, 5)
@@ -100,7 +100,9 @@ display_book.add_layout(month1)
 display_book.add_layout(month2)
 display_book.add_layout(plan1)
 display_book.add_layout(plan2)
-display_book.render_display(p, debug=False)
 """
+display_book.add_layout(typeset)
+display_book.add_layout(typeset)
+display_book.render_display(p, debug=False)
 
 p.end()

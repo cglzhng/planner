@@ -1,3 +1,4 @@
+from PIL import ImageFont
 from enum import Enum
 
 # Size in pt (horizontal)
@@ -69,9 +70,13 @@ class Color(object):
 		self.k = k
 
 BLACK = Color(0, 0, 0, 255)
-LIGHT_PURPLE = Color(0.4, 0.4, 0, 0)
+BLUE = Color(0.75, 0.4, 0, 0)
+LIGHT_BLUE = Color(0.3, 0.15, 0, 0)
+PURPLE = Color(0.4, 0.4, 0, 0)
+LIGHT_PURPLE = Color(0.2, 0.2, 0, 0)
 LIGHT_GREEN = Color(0.5, 0, 0.5, 0)
-LIGHT_RED = Color(0, 0.75, 0.5, 0)
+LIGHT_RED = Color(0, 0.3, 0.2, 0)
+RED = Color(0, 0.75, 0.5, 0)
 BRIGHT_RED = Color(0, 0.8, 0.8, 0)
 BLUE_GRAY = Color(0.2, 0, 0, 0.4)
 BROWN = Color(0, 0.4, 0.7, 0.2)
@@ -142,45 +147,73 @@ SV_CALENDAR_SPEC = {
 	"start_weekday": Weekday.MONDAY,
 }
 
+
 FONTS = {
+	"Fira Sans": {
+		"Styles": {
+			"Regular": {
+				"name": "FiraSans-Regular",
+				"ttf": "firasans-regular.ttf",
+				"t42": "firasans-regular.t42",
+			},
+			"Italic": {
+				"name": "FiraSans-Italic",
+				"ttf": "firasans-italic.ttf",
+				"t42": "firasans-italic.t42",
+			},
+		},
+		"Sizes": {
+			"Tinier": 6,
+			"Tiny": 7,
+			"Small": 9,
+			"Medium": 11,
+			"Big": 14,
+			"Huge": 18,
+		},
+		"LineHeights": {
+			"Tinier": 1.5,
+			"Tiny": 1.5,
+			"Small": 2,
+			"Medium": 1.5,
+			"Big": 1.5,
+			"Huge": 1.5,
+		},
+	},
 	"Iosevka": {
-		"Tinier": {
-			"size": 6,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
+		"Styles": {
+			"Regular": {
+				"name": "PlannerFont",
+				"t42": "iosevka-regular.t42",
+				"ttf": "iosevka-regular.ttf",
+			},
 		},
-		"Tiny": {
-			"size": 7,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
+		"Sizes": {
+			"Tinier": 6,
+			"Tiny": 7,
+			"Small": 9,
+			"Medium": 11,
+			"Big": 14,
+			"Huge": 18,
 		},
-		"Small": {
-			"size": 9,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
-		},
-		"Medium": {
-			"size": 11,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
-		},
-		"Big": {
-			"size": 14,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
-		},
-		"Huge": {
-			"size": 18,
-			"width_ratio": 1 / 2,
-			"height_ratio": 5 / 7,
+		"LineHeights": {
+			"Tinier": 1.5,
+			"Tiny": 1.5,
+			"Small": 1.5,
+			"Medium": 1.5,
+			"Big": 1.5,
+			"Huge": 1.5,
 		},
 	},
 }
 
-FONT_FILE = "iosevka-regular.t42"
 FONT = FONTS["Iosevka"]
 
-BOOK_SIZE = PaperSize.A5
+for style in FONT["Styles"]:
+	FONT["Styles"][style]["PILFonts"] = {}
+	for size in FONT["Sizes"]:
+		FONT["Styles"][style]["PILFonts"][size] = ImageFont.truetype(FONT["Styles"][style]["ttf"], FONT["Sizes"][size])
+
+BOOK_SIZE = PaperSize.A6
 
 match BOOK_SIZE:
 	case PaperSize.A5:
@@ -196,7 +229,7 @@ match BOOK_SIZE:
 		CALENDAR_DAY_WIDTH = 8
 		CALENDAR_DAY_HEIGHT = 7
 		CALENDAR_HEADER_HEIGHT = 2
-		CALENDAR_HEADER_TEXT = FONT["Small"]
+		CALENDAR_HEADER_TEXT = "Small"
 	case PaperSize.A6:
 		PAPER = PAPERS["A4"]
 		PAPER_ORIENTATION = Orientation.VERTICAL
@@ -210,6 +243,6 @@ match BOOK_SIZE:
 		CALENDAR_DAY_WIDTH = 6
 		CALENDAR_DAY_HEIGHT = 6
 		CALENDAR_HEADER_HEIGHT = 2
-		CALENDAR_HEADER_TEXT = FONT["Small"]
+		CALENDAR_HEADER_TEXT = "Small"
 		WEEK_DAY_HEIGHT = 9
 		WEEK_DAY_WIDTH = 24
