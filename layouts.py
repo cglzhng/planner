@@ -25,11 +25,11 @@ def make_test_grid_with_secret(start, num, stroke):
 	return layout
 
 def make_typeset_test():
-	layout = make_base_grid()
+	layout = Layout()
 
 	layout.add_shape(TextBox(
 		Box(5, 5, 14, 26, Stroke.DARKER, True),
-		Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", "Small", BLACK),
+		Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.\nIt has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.\nIt was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", "Small", BLACK),
 		padding_left=10,
 		padding_right=10,
 	))
@@ -339,7 +339,7 @@ def make_month(calendar, month, num_days, start_day, start_week=None):
 		if weekday == 0 and height == CALENDAR_DAY_HEIGHT and start_week is not None:
 			left.add_shape(TextBox(
 				Box(left_start_x - 1, y, 1, 1, None),
-				Text(f"W{week + start_week}", "Tinier", LIGHT_PURPLE),
+				Text(f"W\n{week + start_week}", "Tinier", PURPLE),
 			))
 
 		day = day + 1

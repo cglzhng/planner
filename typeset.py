@@ -12,7 +12,8 @@ def render_textbox(textbox):
 	box_width = box.width * UNIT
 	box_height = box.height * UNIT
 
-	pilfont = FONT["Styles"]["Regular"]["PILFonts"][text.size]
+	pilfont = FONT["Styles"]["Regular"]["PILFont"]
+	font_scale = FONT["Sizes"][text.size] / FONT_RENDER_SIZE
 
 	if text.orientation == Orientation.HORIZONTAL:
 		max_len = box_width - textbox.padding_left - textbox.padding_right
@@ -23,17 +24,14 @@ def render_textbox(textbox):
 
 	words = text.string.split(" ")
 
-	space_len = pilfont.getlength(" ")
+	space_len = pilfont.getlength(" ") * font_scale
 
 	cur_string = ""
 	cur_string_len = 0
 	cur_word = ""
 	cur_word_len = 0
 	for c in text.string + " ": 
-		if c == " " and cur_word != "":
-			if cur_string != "":
-				cur_string += " "
-				cur_string_len += space_len
+		if (c == " " or c == "\n") and cur_word != "":
 			if cur_string_len + cur_word_len > max_len and cur_string != "":
 				strings.append({
 					"string": cur_string,
@@ -41,12 +39,22 @@ def render_textbox(textbox):
 				})
 				cur_string = ""
 				cur_string_len = 0
+			if cur_string != "":
+				cur_string += " "
+				cur_string_len += space_len
 			cur_string += cur_word
 			cur_string_len += cur_word_len
 			cur_word = ""
 			cur_word_len = 0
+			if c == "\n":
+				strings.append({
+					"string": cur_string,
+					"length": cur_string_len
+				})
+				cur_string = ""
+				cur_string_len = 0
 		else:
-			c_len = pilfont.getlength(c)	
+			c_len = pilfont.getlength(c) * font_scale
 			cur_word += c
 			cur_word_len += c_len
 	if cur_string != "":
@@ -54,23 +62,17 @@ def render_textbox(textbox):
 			"string": cur_string,
 			"length": cur_string_len,
 		})
-
+	
 	max_string_len = 0
 	for string in strings:
 		if string["length"] > max_string_len:
 			max_string_len = string["length"] 
 	
-	eprint(max_len)
-	eprint(strings)
-	
-
-	bbox = pilfont.getbbox("A")
-	cap_height = (bbox[3] - bbox[1]) 
+	bbox = pilfont.getbbox("M")
+	cap_height = (bbox[3] - bbox[1]) * font_scale
 	line_height = FONT["LineHeights"][text.size] * cap_height
 	offset = (line_height - cap_height) / 2
 	girth = line_height * len(strings)
-	eprint(cap_height)
-	eprint(offset)
 
 	# Bounding box width
 	if text.orientation == Orientation.HORIZONTAL:
@@ -102,6 +104,8 @@ def render_textbox(textbox):
 
 		string["x"] = x
 		string["y"] = y
+		string["cap_height"] = cap_height
+		string["girth"] = girth
 
 	return strings
 

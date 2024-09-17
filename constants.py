@@ -149,17 +149,67 @@ SV_CALENDAR_SPEC = {
 
 
 FONTS = {
+	"Cooper Hewitt": {
+		"Styles": {
+			"Regular": {
+				"name": "CooperHewitt-Book",
+				"ttf": "fonts/cooperhewitt-book.ttf",
+				"t42": "fonts/cooperhewitt-book.t42",
+			},
+		},
+		"Sizes": {
+			"Tinier": 5,
+			"Tiny": 6,
+			"Small": 8,
+			"Medium": 10,
+			"Big": 14,
+			"Huge": 18,
+		},
+		"LineHeights": {
+			"Tinier": 1.2,
+			"Tiny": 1.5,
+			"Small": 2,
+			"Medium": 1.5,
+			"Big": 1.5,
+			"Huge": 1.5,
+		},
+	},
+	"IBM Plex Sans": {
+		"Styles": {
+			"Regular": {
+				"name": "IBMPlexSans-Regular",
+				"ttf": "fonts/ibmplexsans-regular.ttf",
+				"t42": "fonts/ibmplexsans-regular.t42",
+			},
+		},
+		"Sizes": {
+			"Tinier": 6,
+			"Tiny": 7,
+			"Small": 9,
+			"Medium": 11,
+			"Big": 14,
+			"Huge": 18,
+		},
+		"LineHeights": {
+			"Tinier": 1.5,
+			"Tiny": 1.5,
+			"Small": 2,
+			"Medium": 1.5,
+			"Big": 1.5,
+			"Huge": 1.5,
+		},
+	},
 	"Fira Sans": {
 		"Styles": {
 			"Regular": {
 				"name": "FiraSans-Regular",
-				"ttf": "firasans-regular.ttf",
-				"t42": "firasans-regular.t42",
+				"ttf": "fonts/firasans-regular.ttf",
+				"t42": "fonts/firasans-regular.t42",
 			},
 			"Italic": {
 				"name": "FiraSans-Italic",
-				"ttf": "firasans-italic.ttf",
-				"t42": "firasans-italic.t42",
+				"ttf": "fonts/firasans-italic.ttf",
+				"t42": "fonts/firasans-italic.t42",
 			},
 		},
 		"Sizes": {
@@ -183,8 +233,8 @@ FONTS = {
 		"Styles": {
 			"Regular": {
 				"name": "PlannerFont",
-				"t42": "iosevka-regular.t42",
-				"ttf": "iosevka-regular.ttf",
+				"t42": "fonts/iosevka-regular.t42",
+				"ttf": "fonts/iosevka-regular.ttf",
 			},
 		},
 		"Sizes": {
@@ -206,12 +256,12 @@ FONTS = {
 	},
 }
 
-FONT = FONTS["Iosevka"]
+FONT_RENDER_SIZE = 100
+
+FONT = FONTS["Cooper Hewitt"]
 
 for style in FONT["Styles"]:
-	FONT["Styles"][style]["PILFonts"] = {}
-	for size in FONT["Sizes"]:
-		FONT["Styles"][style]["PILFonts"][size] = ImageFont.truetype(FONT["Styles"][style]["ttf"], FONT["Sizes"][size])
+	FONT["Styles"][style]["PILFont"] = ImageFont.truetype(FONT["Styles"][style]["ttf"], FONT_RENDER_SIZE)
 
 BOOK_SIZE = PaperSize.A6
 
