@@ -68,11 +68,11 @@ greg = GregorianCalendar()
 layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 blank = make_blank_layout()
 
-for i in range(0, 12):
+for i in range(0, 80):
 	layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 	plain_book.add_layout(layout)
 
-plain_book.render_single(p, debug=False)
+plain_book.render_signature(p, 4, debug=False)
 
 """
 

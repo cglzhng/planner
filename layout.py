@@ -137,7 +137,7 @@ class Layout(object):
 	
 	def render(self, printer, side, col, row, num=None):
 		if not self.force_no_num and num is not None:
-			t = Text(str(num), "Tiny", LIGHT_PURPLE)
+			t = Text(str(num), "Tiny", LIGHT_BLUE)
 			if side == Side.LEFT:
 				box = Box(0, 0, 1, 1)
 			if side == Side.RIGHT:

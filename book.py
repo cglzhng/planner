@@ -38,21 +38,58 @@ class Book:
 			printer.next_page()
 	
 	def render_signature(self, printer, sheets_per_signature, debug=False):
-		layouts_per_printer_page = PAGE_ROWS * PAGE_COLS
+		db = DoubleSidedRenderer()
 
 		layouts = self.layouts
-		sheets = ceil(len(layouts / 4))
+		sheets = ceil(len(layouts) / 4)
 		signatures = ceil(sheets / sheets_per_signature)
 
-		for s in range(signatures):
-			pass	
+		for sig in range(signatures):
+			for sheet in range(sheets_per_signature):
+				top1_index = sig * sheets_per_signature * 4 + sheets_per_signature * 4 - sheet * 2 - 1
+				bottom1_index = sig * sheets_per_signature * 4 + sheets_per_signature * 4 - sheet * 2 - 2
+				top2_index = sig * sheets_per_signature * 4 + sheet * 2
+				bottom2_index = sig * sheets_per_signature * 4 + sheet * 2 + 1
+
+				top1 = None
+				top2 = None
+				bottom1 = None
+				bottom2 = None
+				if top1_index < len(layouts):
+					top1 = {
+						"layout": layouts[top1_index],
+						"side": Side.LEFT,
+						"num": top1_index + 1,
+					}
+				if bottom1_index < len(layouts):
+					bottom1 = {
+						"layout": layouts[bottom1_index],
+						"side": Side.RIGHT,
+						"num": bottom1_index + 1,
+					}
+				if top2_index < len(layouts): 
+					top2 = {
+						"layout": layouts[top2_index],
+						"side": Side.RIGHT,
+						"num": top2_index + 1,
+					}
+				if bottom2_index < len(layouts):
+					bottom2 = {
+						"layout": layouts[bottom2_index],
+						"side": Side.LEFT,
+						"num": bottom2_index + 1,
+					}
+
+				db.add_leaf(top1, bottom1)
+				db.add_leaf(top2, bottom2)
+
+		db.render(printer, debug)
 	
 	def render_single(self, printer, max_pages=None, debug=False):
 		db = DoubleSidedRenderer()
 
 		layouts = self.layouts
 		sheets = ceil(len(layouts) / 4)
-
 
 		for sheet in range(sheets):
 			top1_index = sheets * 4 - sheet * 2 - 1 
