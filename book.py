@@ -1,5 +1,6 @@
 from math import ceil 
 
+from double_sided import *
 from layout import *
 from utils import *
 from grid import *
@@ -35,57 +36,61 @@ class Book:
 			self._render_layouts_by_index(printer, to_render)
 			eprint(to_render)
 			printer.next_page()
-
 	
-	def render(self, printer, max_pages=None, debug=False):
-		layouts_per_page = PAGE_ROWS * PAGE_COLS
+	def render_signature(self, printer, sheets_per_signature, debug=False):
+		layouts_per_printer_page = PAGE_ROWS * PAGE_COLS
 
 		layouts = self.layouts
-		sheets = ceil(len(layouts) / (layouts_per_page * 2))
+		sheets = ceil(len(layouts / 4))
+		signatures = ceil(sheets / sheets_per_signature)
 
-		print_range = sheets
-		if max_pages != None:
-			print_range = min(pages, ceil(max_pages / 2))
+		for s in range(signatures):
+			pass	
+	
+	def render_single(self, printer, max_pages=None, debug=False):
+		db = DoubleSidedRenderer()
 
-		folds = []
-		num_folds = ceil(len(self.layouts) / 4)
-		for f in range(0, num_folds):
-			fold = [
-				f * 2,
-				f * 2 + 1,
-				num_folds * 4 - (f * 2 + 1) - 1,
-				num_folds * 4 - (f * 2) - 1,
-			]
-			folds.append(fold)
+		layouts = self.layouts
+		sheets = ceil(len(layouts) / 4)
 
-		for s in range(0, print_range):
-			i = s * (layouts_per_page // 2)
 
-			if debug:
-				printer.draw_center_rectangle()
+		for sheet in range(sheets):
+			top1_index = sheets * 4 - sheet * 2 - 1 
+			bottom1_index = sheets * 4 - sheet * 2 - 2
+			top2_index = sheet * 2
+			bottom2_index = sheet * 2 + 1
 
-			to_render = []
-			for l in range(0, ceil(layouts_per_page / 2)):
-				if i + l < len(folds):
-					fold = folds[i + l]
-					to_render.append((fold[3], Side.LEFT))
-					to_render.append((fold[0], Side.RIGHT))
-			self._render_layouts_by_index(printer, to_render)
+			top1 = None
+			top2 = None
+			bottom1 = None
+			bottom2 = None
+			if top1_index < len(layouts):
+				top1 = {
+					"layout": layouts[top1_index],
+					"side": Side.LEFT,
+					"num": top1_index + 1,
+				}
+			if bottom1_index < len(layouts):
+				bottom1 = {
+					"layout": layouts[bottom1_index],
+					"side": Side.RIGHT,
+					"num": bottom1_index + 1,
+				}
+			if top2_index < len(layouts): 
+				top2 = {
+					"layout": layouts[top2_index],
+					"side": Side.RIGHT,
+					"num": top2_index + 1,
+				}
+			if bottom2_index < len(layouts):
+				bottom2 = {
+					"layout": layouts[bottom2_index],
+					"side": Side.LEFT,
+					"num": bottom2_index + 1,
+				}
 
-								
-			printer.next_page()
+			db.add_leaf(top1, bottom1)
+			db.add_leaf(top2, bottom2)
 
-			if debug:
-				printer.draw_center_rectangle()
-
-			to_render = []
-			for l in range(0, ceil(layouts_per_page / 2)):
-				if i + l < len(folds):
-					fold = folds[i + l]
-					to_render.append((fold[1], Side.LEFT))
-					to_render.append((fold[2], Side.RIGHT))
-			self._render_layouts_by_index(printer, to_render)
-
-			printer.next_page()
-
+		db.render(printer, debug)
 
