@@ -12,12 +12,13 @@ class ColorBox(object):
 	height: int
 	color: Color
 	stroke: Stroke = None
+	stroke_color: Color = None
 
 	def add_to_layout(self, layout):
 		if self.width == 0 or self.height == 0:
 			return
 
-		box = Box(self.x, self.y, self.width, self.height, self.stroke, True)
+		box = Box(self.x, self.y, self.width, self.height, self.stroke, True, self.stroke_color)
 		box.add_to_layout(layout)
 
 		layout.rect.append(LayoutRect(self.x * UNIT, self.y * UNIT, self.width * UNIT, self.height * UNIT, self.color))
@@ -30,7 +31,7 @@ class Box(object):
 	height: int
 	stroke: Stroke = None
 	blank: bool = False
-	color:  Color = None
+	color: Color = None
 
 	def add_to_layout(self, layout):
 		if self.width == 0 and self.height == 0:

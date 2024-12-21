@@ -97,10 +97,11 @@ def render_textbox(textbox):
 			if textbox.align_v == Align.CENTER:
 				t_y = (box_height - text_height) / 2
 				y = box_y + t_y + (len(strings) - i - 1) * line_height + offset
-	#		if self.align_v == Align.START:
-	#			y = box_y + box_height - text_height - self.padding_top
-	#		if self.align_v == Align.END:
-	#			y = box_y + self.padding_bottom
+			if textbox.align_v == Align.START:
+				y = box_y + box_height - text_height - textbox.padding_top
+			if textbox.align_v == Align.END:
+				eprint("Here")
+				y = box_y + textbox.padding_bottom + (len(strings) - i - 1) * line_height 
 
 		string["x"] = x
 		string["y"] = y

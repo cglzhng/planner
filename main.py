@@ -68,13 +68,26 @@ greg = GregorianCalendar()
 layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 blank = make_blank_layout()
 
-for i in range(0, 80):
+plain_book.add_layout(blank)
+for i in range(0, 78):
 	layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 	plain_book.add_layout(layout)
+plain_book.add_layout(blank)
+
+week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
+display_book.add_layout(week1)
+display_book.add_layout(week2)
+
+plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
+display_book.add_layout(plan1)
+display_book.add_layout(plan2)
+display_book.render_display(p, debug=False)
+
+"""
 
 plain_book.render_signature(p, 4, debug=False)
 
-"""
+
 
 spring1, spring2 = make_month(sv, "Spring", 28, Weekday.MONDAY)
 planner_book.add_layout(blank)
@@ -90,20 +103,15 @@ for layout in layouts:
 	planner_book.add_layout(layout)
 planner_book.add_layout(blank)
 
+title = make_blank_title()
+display_book.add_layout(title)
+horizontal_double_page = make_blank_title_double_horizontal()
+display_book.add_layout(horizontal_double_page)
 
 typeset = make_typeset_test()
 plain = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
-plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
-month1, month2 = make_month(greg, Month.MARCH, 31, Weekday.SATURDAY, 40)
-week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
-display_book.add_layout(week1)
-display_book.add_layout(week2)
-display_book.add_layout(plan1)
-display_book.add_layout(plan2)
 display_book.add_layout(typeset)
 display_book.add_layout(typeset)
-display_book.add_layout(month1)
-display_book.add_layout(month2)
 display_book.render_single(p, debug=False)
 
 """

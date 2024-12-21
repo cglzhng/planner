@@ -46,7 +46,7 @@ class GregorianCalendar(object):
 			},
 			Month.SEPTEMBER: {
 				"name": "September",
-				"short": "Sep",
+				"short": "Sept",
 				"days": 30,
 			},
 			Month.OCTOBER: {

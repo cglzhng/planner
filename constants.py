@@ -95,13 +95,34 @@ class Weekday(Enum):
 WEEKDAYS = [e for e in Weekday]
 
 WEEKDAY_NAMES = {
-	Weekday.MONDAY.value: "Monday",
-	Weekday.TUESDAY.value: "Tuesday",
-	Weekday.WEDNESDAY.value: "Wednesday",
-	Weekday.THURSDAY.value: "Thursday",
-	Weekday.FRIDAY.value: "Friday",
-	Weekday.SATURDAY.value: "Saturday",
-	Weekday.SUNDAY.value: "Sunday",
+	Weekday.MONDAY.value: {
+		"long": "Monday",
+		"short": "Mon",
+	},
+	Weekday.TUESDAY.value: {
+		"long": "Tuesday",
+		"short": "Tue",
+	},
+	Weekday.WEDNESDAY.value: {
+		"long": "Wednesday",
+		"short": "Wed",
+	},
+	Weekday.THURSDAY.value: {
+		"long": "Thursday",
+		"short": "Thu",
+	},
+	Weekday.FRIDAY.value: {
+		"long": "Friday",
+		"short": "Fri",
+	},
+	Weekday.SATURDAY.value: {
+		"long": "Saturday",
+		"short": "Sat",
+	},
+	Weekday.SUNDAY.value: {
+		"long": "Sunday",
+		"short": "Sun",
+	},
 }
 
 class Month(Enum):
