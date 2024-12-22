@@ -1,3 +1,4 @@
+from calendar import *
 from book import *
 
 def make_test_lines_horizontal(start, num, stroke):
@@ -36,67 +37,55 @@ def make_typeset_test():
 
 	return layout
 
-def make_color_test():
-	layout = make_base_grid()
+def make_color_test(grid=True):
+	if grid:
+		layout = make_base_grid()
+	else:
+		layout = Layout()
+
 	layout.force_no_num = True
 
 	colors = [
 		{
-			"name": "Light Purple",
-			"value": LIGHT_PURPLE,
+			"name": "Teal",
+			"value": TEAL,
 		},
 		{
-			"name": "Light Green",
-			"value": LIGHT_GREEN,
+			"name": "Purple",
+			"value": PURPLE,
 		},
 		{
-			"name": "Light Red",
-			"value": LIGHT_RED,
+			"name": "Green",
+			"value": GREEN,
 		},
 		{
-			"name": "Bright Red",
-			"value": BRIGHT_RED,
-		},
-		{
-			"name": "Blue Gray",
-			"value": BLUE_GRAY,
-		},
-		{
-			"name": "Brown",
-			"value": BROWN,
-		},
-		{
-			"name": "Light Blue",
-			"value": LIGHT_BLUE,
-		},
-		{
-			"name": "Blue",
-			"value": BLUE,
+			"name": "Orange",
+			"value": ORANGE,
 		},
 	]
 
 	for i in range(len(colors)):
 		color = colors[i]
 		layout.add_shape(TextBox(
-			ColorBox(0, 3 * i, 6, 2, color["value"], Stroke.SOLID, color["value"]),
+			ColorBox(0, GRID_HEIGHT - 3 * (i + 1), 6, 2, color["value"], Stroke.SOLID, color["value"]),
 			Text(color["name"], "Small", WHITE),
 			padding_left = 7,
 		))
 
 		layout.add_shape(TextBox(
-			ColorBox(7, 3 * i, 5, 1, color["value"], Stroke.SOLID, color["value"]),
+			ColorBox(7, GRID_HEIGHT - 3 * (i + 1), 5, 1, color["value"], Stroke.SOLID, color["value"]),
 			Text(color["name"], "Tiny", WHITE),
 			padding_left = 7,
 		))
 
 		layout.add_shape(TextBox(
-			Box(13, 3 * i, 6, 2, Stroke.SOLID, True, color["value"]),
+			Box(13, GRID_HEIGHT - 3 * (i + 1), 6, 2, Stroke.SOLID, True, color["value"]),
 			Text(color["name"], "Small", color["value"]),
 			padding_left = 7,
 		))
 
 		layout.add_shape(TextBox(
-			Box(20, 3 * i, 4, 1, Stroke.SOLID, True, color["value"]),
+			Box(20, GRID_HEIGHT - 3 * (i + 1), 4, 1, Stroke.SOLID, True, color["value"]),
 			Text(color["name"], "Tiny", color["value"]),
 			padding_left = 7,
 		))
@@ -196,6 +185,17 @@ def make_blank_title():
 	layout.add_shape(Box(0, GRID_HEIGHT - 2, GRID_WIDTH, 2, None, True))
 	return layout
 
+def make_title(color, title):
+	layout = make_base_grid()
+	layout.add_shape(TextBox(
+		ColorBox(0, GRID_HEIGHT - 2, GRID_WIDTH, 2, color, Stroke.SOLID, color),
+		Text(title, "Medium", WHITE),
+		align_h = Align.START,
+		padding_left = UNIT / 2,
+	))
+
+	return layout
+
 def make_blank_title_double_horizontal():
 	layout = make_base_grid()
 	shapes = []
@@ -212,11 +212,9 @@ def make_blank_title_double_horizontal():
 	layout.add_shapes(shapes)
 	return layout
 
-def add_month_header(calendar, month, left, right):
+def add_month_header(color, calendar, month, left, right):
 	width = CALENDAR_DAY_WIDTH
 	height = CALENDAR_HEADER_HEIGHT
-
-	color = LIGHT_GREEN
 
 	left.add_shape(TextBox(
 		ColorBox(0, GRID_HEIGHT - height, width, height, color, Stroke.SOLID, color),
@@ -245,11 +243,12 @@ def add_month_header(calendar, month, left, right):
 		))
 	
 
-def make_month(calendar, month, num_days, start_day, start_week=None):
+def make_month(color, calendar, month, num_days, start_day, start_week=None):
 	left = make_base_grid()
 	right = make_base_grid()
 
-	color = LIGHT_GREEN
+	left.set_num_color(color)
+	right.set_num_color(color)
 
 	start_y = GRID_HEIGHT - CALENDAR_HEADER_HEIGHT - CALENDAR_DAY_HEIGHT
 	left_start_x = GRID_WIDTH - 3 * CALENDAR_DAY_WIDTH
@@ -267,7 +266,7 @@ def make_month(calendar, month, num_days, start_day, start_week=None):
 
 			side.add_shape(Box(x, start_y, CALENDAR_DAY_WIDTH, CALENDAR_DAY_HEIGHT, Stroke.DARK))
 
-	add_month_header(calendar, month, left, right)
+	add_month_header(color, calendar, month, left, right)
 
 	week = 0
 	weekday = start_day_index
@@ -314,11 +313,12 @@ def make_month(calendar, month, num_days, start_day, start_week=None):
 	
 	return left, right
 
-def make_month_plan(calendar, month, num_days, start_day):
+def make_month_plan(color, calendar, month, num_days, start_day):
 	left = make_base_grid()
 	right = make_base_grid()
 
-	color = LIGHT_GREEN
+	left.set_num_color(color)
+	right.set_num_color(color)
 
 	half_width = GRID_WIDTH // 2
 	half_height = GRID_HEIGHT // 2
@@ -357,11 +357,12 @@ def make_month_plan(calendar, month, num_days, start_day):
 
 	return left, right
 	
-def make_weekly_layout(calendar, month, num_days, week, start_day):
+def make_weekly_layout(color, calendar, month, num_days, week, start_day):
 	left = make_base_grid()
 	right = make_base_grid()
 
-	color = LIGHT_GREEN
+	left.set_num_color(color)
+	right.set_num_color(color)
 
 	header_height = 2
 	num_width = 2
@@ -446,12 +447,57 @@ def make_weekly_layout(calendar, month, num_days, week, start_day):
 
 	return left, right
 
+def make_gregorian_year_page(color, year):
+	greg = GregorianCalendar()
+	layout = Layout(force_no_num=True)
+
+	layout.set_num_color(color)
+
+	gap_x = 1
+	gap_y = 1
+
+	for i in range(12):
+		row = i // 3
+		col = i - row * 3
+
+		x = col * (7 + gap_x)
+		y = GRID_HEIGHT - row * (8 + gap_y)
+		
+		layout.add_shape(TextBox(
+			Box(x, y - 1, 7, 1, None, True),
+			Text(greg.months[greg.month_order[i]]["name"].upper(), "Small", color),
+		))
+
+		for w in range(7):
+			layout.add_shape(TextBox(
+				Box(x + w, y - 2, 1, 1),
+				Text(WEEKDAY_NAMES[WEEKDAYS[w].value]["long"][0], "Tiny", color),
+			))
+			
+		layout.add_shape(Box(x, y - 2, 7, 0, Stroke.DARKER))
+
+		start_day = greg.get_weekday_from_date(year, greg.month_order[i], 1)
+		day_index = get_weekday_index(start_day)
+		week = 0
+
+		for day in range(greg.months[greg.month_order[i]]["days"]):
+			layout.add_shape(TextBox(
+				Box(x + day_index, y - week - 3, 1, 1),
+				Text(str(day + 1), "Tiny", color),
+			))
+			day_index += 1
+			if (day_index == 7):
+				day_index = 0
+				week += 1
+	
+	return layout
+
 def make_monthly_planner(calendar, year, extra_pages):
 	layouts = []
 	for month in calendar.months:
 		num_days = calendar.get_num_days_in_month(year, month)
 		start_day = calendar.get_weekday_from_date(year, month, 1)
-		left, right = make_month(calendar, month, num_days, start_day, None)
+		left, right = make_month(LIGHT_BLUE, calendar, month, num_days, start_day, None)
 		layouts.append(left)
 		layouts.append(right)
 	
@@ -465,6 +511,11 @@ def make_planner(calendar, year, start_month, num_months):
 	layouts = []
 	month_index = calendar.get_month_index(start_month)
 
+	layouts.append(make_gregorian_year_page(BLUE_GRAY, year))
+	layouts.append(make_title(BLUE_GRAY, str(year)))
+
+	quarter_colors = [TEAL, PURPLE, GREEN, ORANGE]
+
 	for i in range(0, num_months):
 		month = calendar.month_order[month_index + i]
 		num_days = calendar.get_num_days_in_month(year, month) 
@@ -472,10 +523,10 @@ def make_planner(calendar, year, start_month, num_months):
 		start_day = calendar.get_weekday_from_date(year, month, 1)
 		start_week = calendar.get_week_from_date(year, month, 1)
 
-		left, right = make_month(calendar, month, num_days, start_day, start_week)
+		left, right = make_month(quarter_colors[i // 3], calendar, month, num_days, start_day, start_week)
 		layouts.append(left)
 		layouts.append(right)
-		left, right = make_month_plan(calendar, month, num_days, start_day)
+		left, right = make_month_plan(quarter_colors[i // 3], calendar, month, num_days, start_day)
 		layouts.append(left)
 		layouts.append(right)
 	
@@ -491,7 +542,7 @@ def make_planner(calendar, year, start_month, num_months):
 				start_day = prev_month_num_days - start_weekday_index
 				week = calendar.get_week_from_date(year, month, 1)
 
-				left, right = make_weekly_layout(calendar, prev_month, prev_month_num_days, week, start_day)
+				left, right = make_weekly_layout(quarter_colors[i // 3], calendar, prev_month, prev_month_num_days, week, start_day)
 				layouts.append(left)
 				layouts.append(right)
 			start_day = 7 - start_weekday_index + 1
@@ -500,7 +551,7 @@ def make_planner(calendar, year, start_month, num_months):
 
 		while start_day < num_days:
 			week = calendar.get_week_from_date(year, month, start_day)
-			left, right = make_weekly_layout(calendar, month, num_days, week, start_day)
+			left, right = make_weekly_layout(quarter_colors[i // 3], calendar, month, num_days, week, start_day)
 			layouts.append(left)
 			layouts.append(right)
 			start_day += 7

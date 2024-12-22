@@ -65,6 +65,14 @@ display_book = Book()
 sv = StaticCalendar(SV_CALENDAR_SPEC)
 greg = GregorianCalendar()
 
+layouts = make_planner(greg, 2024, Month.JANUARY, 12)
+for layout in layouts:
+	planner_book.add_layout(layout)
+planner_book.render_signature(p, 4, debug=False)
+
+
+
+"""
 layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 blank = make_blank_layout()
 
@@ -73,17 +81,6 @@ for i in range(0, 78):
 	layout = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
 	plain_book.add_layout(layout)
 plain_book.add_layout(blank)
-
-week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
-display_book.add_layout(week1)
-display_book.add_layout(week2)
-
-plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
-display_book.add_layout(plan1)
-display_book.add_layout(plan2)
-display_book.render_display(p, debug=False)
-
-"""
 
 plain_book.render_signature(p, 4, debug=False)
 
@@ -109,10 +106,33 @@ horizontal_double_page = make_blank_title_double_horizontal()
 display_book.add_layout(horizontal_double_page)
 
 typeset = make_typeset_test()
+display_book.add_layout(typeset)
+
 plain = make_base_grid_with_secret(GRID_HEIGHT, GRID_WIDTH, 5)
-display_book.add_layout(typeset)
-display_book.add_layout(typeset)
+
+week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
+display_book.add_layout(week1)
+display_book.add_layout(week2)
+
+year_page = make_gregorian_year_page(2024)
+display_book.add_layout(year_page)
+
+title_page = make_title("2024", BLUE_GRAY)
+display_book.add_layout(title_page)
+
+plan1, plan2 = make_month_plan(greg, Month.DECEMBER, 31, Weekday.SATURDAY)
+display_book.add_layout(plan1)
+display_book.add_layout(plan2)
+
+week1, week2 = make_weekly_layout(greg, Month.OCTOBER, 31, 18, 6)
+display_book.add_layout(week1)
+display_book.add_layout(week2)
+
+color_test = make_color_test(grid=False)
+display_book.add_layout(color_test)
+
 display_book.render_single(p, debug=False)
+display_book.render_display(p, debug=False)
 
 """
 

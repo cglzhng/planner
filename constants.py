@@ -71,17 +71,22 @@ class Color(object):
 
 BLACK = Color(0, 0, 0, 255)
 BLUE = Color(0.75, 0.4, 0, 0)
-LIGHT_BLUE = Color(0.3, 0.15, 0, 0)
-PURPLE = Color(0.4, 0.4, 0, 0)
-LIGHT_PURPLE = Color(0.2, 0.2, 0, 0)
-LIGHT_GREEN = Color(0.5, 0, 0.5, 0)
+LIGHT_BLUE = Color(0.4, 0.25, 0, 0)
+PURPLE = Color(0.3, 0.8, 0, 0)
+LIGHT_PURPLE = Color(0.25, 0.45, 0, 0)
+LIGHT_GREEN = Color(0.45, 0, 0.50, 0)
+LIGHT_ORANGE = Color(0, 0.4, 0.6, 0)
 LIGHT_RED = Color(0, 0.3, 0.2, 0)
 RED = Color(0, 0.75, 0.5, 0)
 BRIGHT_RED = Color(0, 0.8, 0.8, 0)
 BLUE_GRAY = Color(0.2, 0, 0, 0.4)
 BROWN = Color(0, 0.4, 0.7, 0.2)
 TEAL = Color(0.8, 0, 0.3, 0)
+ORANGE = Color(0, 0.4, 0.8, 0)
+GREEN = Color(0.4, 0, 0.8, 0)
 WHITE = Color(0, 0, 0, 0)
+
+PAGE_NUM_COLOR = LIGHT_BLUE
 
 class Weekday(Enum):
 	MONDAY = 1

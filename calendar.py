@@ -101,7 +101,7 @@ class GregorianCalendar(object):
 	def get_week_from_date(self, year, month, day):
 		week = self.get_doy_from_date(year, month, day) // 7 + 1
 		# The first week of the year always contains Jan 4
-		jan_four = get_weekday_from_date(year, Month.JANUARY, 4)
+		jan_four = self.get_weekday_from_date(year, Month.JANUARY, 4)
 		if (jan_four.value > 4):
 			week -= 1
 		return week

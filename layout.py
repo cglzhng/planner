@@ -120,6 +120,10 @@ class Layout(object):
 		self.text = []
 		self.rect = []
 		self.force_no_num = force_no_num
+		self.num_color = PAGE_NUM_COLOR
+	
+	def set_num_color(self, color):
+		self.num_color = color
 	
 	def add_shape(self, shape):
 		shape.add_to_layout(self)
@@ -138,7 +142,7 @@ class Layout(object):
 	
 	def render(self, printer, side, col, row, num=None):
 		if not self.force_no_num and num is not None:
-			t = Text(str(num), "Tiny", LIGHT_BLUE)
+			t = Text(str(num), "Tiny", self.num_color)
 			if side == Side.LEFT:
 				box = Box(0, 0, 1, 1)
 			if side == Side.RIGHT:

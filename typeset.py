@@ -100,7 +100,6 @@ def render_textbox(textbox):
 			if textbox.align_v == Align.START:
 				y = box_y + box_height - text_height - textbox.padding_top
 			if textbox.align_v == Align.END:
-				eprint("Here")
 				y = box_y + textbox.padding_bottom + (len(strings) - i - 1) * line_height 
 
 		string["x"] = x
